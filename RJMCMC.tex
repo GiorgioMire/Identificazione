@@ -1,8 +1,8 @@
 \chapter{Reversible Jump Monte Carlo Markov Chain}
 Nelle sezioni precedenti la transizione della catena associava (in maniera aleatoria)
-uno stato di $M\subset \mathbb{R}^n$ ad uno stato di  $M'\subset \mathbb{R}^n$ .
+uno stato di $X\subset \mathbb{R}^n$ ad uno stato di  $X'\subset \mathbb{R}^n$ .
 Cosa succede se la transizione dovesse associare uno stato $M\subset \mathbb{R}^n$ ad uno stato
-di $M\subset \mathbb{R}^m$ con $ m = n$?
+di $X\subset \mathbb{R}^m$ con $ m = n$?
 La questione scaturisce dal fatto che per gli scopi dell’identificazione dei sistemi,
 restringersi al caso $m = n$ `e molto limitativo e corrisponde a conoscere in partenza
 il numero dei parametri da identificare.
@@ -19,5 +19,102 @@ Si pensi quindi di enumerare le tipologie di modello (anche infinite), si avr`a 
 l’insieme delle possibili strutture di modello `e rappresentabile come un insieme di
 indici
 \begin{equation*}
-K=\left\lbrace 1,2,\dots k \right\rbrace
+\mathcal{K}=\left\lbrace 1,2,\dots k \dots\right\rbrace \subset \mathbb{N}
 \end{equation*}
+Ciascun modello `e associato uno spazio dei coefficienti dello sviluppo ( o in generale
+dei parametri del modello).
+Si ha quindi che a ciascuna tipologia di modello `e associato uno spazio 
+\begin{equation*}
+X_k\subset\mathbb{R}^{n(k)}
+\end{equation*} 
+dove $n(k)$ `e il numero di termini previsti dal modello indicizzato da $k$.
+Si pu`o quindi pensare che la ricerca del modello avvenga in una unione di sottospazi
+definita da
+\begin{equation}
+X=\bigcup_{k\in \mathcal{K}}(\{k\}\times X_k)
+\end{equation}
+
+L’inclusione esplicita dell’indice k si ha perch`e spesso `e necessario che l’algoritmo vi
+acceda, specialmente quando esistono pi`
+u modelli diversi a cui corrisponde lo stesso
+spazio dei parametri.
+Lo stato della catena `e quindi rappresentabile come coppia $x = (k, \theta_k )$ dove k indica
+l’indice della struttura di modello e $\theta_k$ indica i parametri associati a tale struttura,
+il numero di parametri dipende da k.
+Se pur lo spazio appena costruito sia un po’ inusuale, l’algoritmo MH `e ancora
+valido, si tratta di vedere come costruire una catena di Markov che abbia lo stato
+in questo insieme X e che abbia una desiderata densit`a di regime $\ph(\cdot)$ .\\
+\includegraphics[width=0.8\textwidth]{RJMCMCImage.png}\\ 
+Ci limitiamo a considerare i casi in cui, per qualche distribuzione di probabilit`a di
+partenza la probabilit`a che la catena risieda in un sottoinsieme $A \subset X$ e muova
+verso un certo $B\subset X$ sia la stessa qualora si scambino i ruoli di A e di B. Questa
+richiesta `e detta di equilibrio bilanciato , se verificata da una certa probabilit`a `e una
+condizione sufficiente affinch`e questa sia stazionaria.
+
+Spesso per attraversare lo spazio X `e necessario avere a disposizione diverse tipolo-
+gie di mosse.
+Una tipologia di mossa associa la struttura del modello attuale ad una nuova strut-
+tura.
+Affinch`e la condizione di equilibrio bilanciato sia soddisfatta `e necessario che se es-
+iste la mossa $( x \rightarrow x' )$ esista anche la mossa inversa $(x' \rightarrow x)$ .
+Si indichi con $j_m (x)$ la probabilit`a che dallo stato x sia scelta la mossa di tipo m e
+si indichi con $j_m^{-1}
+(x ) $la probabilit`a che dallo stato x sia scelta la mossa di tipo m
+inversa.
+Il problema `e che non ha senso paragonare probabilit`a definite su spazi di dimen-
+sione diversa.
+Per rendere invisibile alla catena il cambio di dimensionalit`a basta immergere i due
+spazi di dimensione diversa in uno stesso spazio di dimensione maggiore e definire
+in tale spazio la probabilit`a.
+Si adotti quindi il seguente protocollo (ideato da Peter Green nel 1995):
+\begin{itemize}
+\item Si estragga la tipologia di mossa.
+\item Si generino r numeri casuali $u\in\mathbb{R}^r$ da una specificata densit`a g.
+\item Si costruisca il nuovo stato attraverso una funzione deterministica h di x e di u.
+\begin{equation}
+(x' , u' ) = h(x, u)
+\end{equation}
+In questo caso sono stati indicati con u gli r numeri che sono estratti casualmente
+dalla distribuzione g quando si effettua la mossa inversa da x' a x usando la funzione
+deterministica inversa
+\begin{equation}
+(x, u) = h ^{-1}(x' , u ')
+\end{equation}
+l’equazione di equilibrio bilanciato si pu`o scrivere dunque come
+\begin{equation*}
+\sum_m \int_{(x,x')\in A\times B}j_m(x)\ph(x)g_m(u)\gamma_m(x'|x)dxdu=
+\sum_m \int_{(x,x')\in A\times B}j_m^{-1}(x')\ph(x')g_m(u')\gamma_m(x'|x)dx'du'
+\end{equation*}
+La sommatoria sulle possibili mosse deriva dal fatto che ad ogni iterazione la tipolo-
+gia di mossa `e esclusiva. Una condizione sufficiente non necessaria perch`e valga il
+bilancio `e che esso valga mossa per mossa ovvero
+\end{itemize}
+\begin{equation*}
+ \int_{(x,x')\in A\times B}j_m(x)\ph(x)g_m(u)\gamma_m(x'|x)dxdu=
+ \int_{(x,x')\in A\times B}j_m^{-1}(x')\ph(x')g_m(u')\gamma_m(x'|x)dx'du'
+\end{equation*}
+se inoltre la funzione h `e un diffeomorfismo vale la formula classica del cambio
+di variabili e quindi si pu`o passare dall’uguaglianza integrale all’uguaglianza delle
+integrande.
+Dal momento che la mossa `e fissata si ha che k e k' sono costanti dunque il cambio
+di variabili richiesto riguarda solo il vettore dei parametri e delle variabili ausiliarie.
+\begin{equation*}
+(\theta_k',u')\rightarrow(\theta_k,u)
+\end{equation*}
+Applicandolo si ottiene
+\begin{equation*}
+j_m(x)\ph(x)g_m(u)\gamma_m(x'|x)=
+j_m^{-1}(x')\ph(x')g_m(u')\gamma_m(x'|x)\left\vert\frac{\partial(\theta_{k'},u') }{\partial(\theta_{k},u) }\right\vert
+\end{equation*}
+Condizione necessaria affinch`e h sia un diffeomorfismo `e che
+\begin{equation}
+dim(\theta_{k'})+dim(u')=dim(\theta_{k})+dim(u)
+\end{equation}
+detta condizione di \emph{dimension matching}. Si ha dunque in tal caso che
+\begin{equation}
+\gamma_m(x'|x)=\min\left\lbrace 1,\frac{
+j_m^{-1}(x')\ph(x')g_m(u')\gamma_m(x'|x)}
+{j_m(x)\ph(x)g_m(u)}
+\left\vert\frac{\partial(\theta_{k'},u') }{\partial(\theta_{k},u) }\right\vert 
+\right\rbrace
+\end{equation}
