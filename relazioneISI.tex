@@ -1,10 +1,20 @@
-\documentclass[10pt,a4paper,oneside,openany]{book}
+\documentclass[10pt,a4paper,oneside,openany,noindent]{book}
 \usepackage[utf8]{inputenc}
 
 \usepackage{amsmath}
+
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\setlength\parindent{0pt}
+\usepackage[pagestyles]{titlesec}
+%\titleformat{\chapter}[display]{\normalfont\bfseries}{}{0pt}{\Huge}
+\newpagestyle{mystyle}
+{\sethead[\thepage][][\chaptertitle]{}{}{\thepage}}
+\pagestyle{mystyle}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\input{newcommands}
 
 \begin{document}
 \chapter{Introduzione}
@@ -12,7 +22,15 @@
 \noindent
 The number of things you don't know is one of the things you don't know\vspace{1em}\\Peter Green
 \end{minipage}\vspace{3em}\\
-Quando si vuole identificare un sistema dinamico una fase importante è stabilire la struttura del modello. Spesso infatti non sono incognite solo le costanti della legge che regola il processo ma non si conoscono nemmeno quali operazioni sui segnali di ingresso e di stato riproducono accettabilmente la dinamica del sistema.\\
+Quando si vuole identificare un sistema dinamico bisogna
+\begin{itemize}
+\item stabilire la struttura del legge dinamica
+\item stabilire il valore numerico delle costanti del modello
+\end{itemize}
+La prima richiesta consiste nel decidere il tipo e il numero di operazioni sui segnali di ingresso e di stato che sono in grado di riprodurre accettabilmente ( e possibilmente con una legge compatta) la dinamica del sistema.
+La seconda richiesta consiste invece nel determinare il valore numerico dei parametri che intervengono.\\
+
+
 I casi in cui è sufficiente una identificazione parametrica sono i casi in cui si ha già la struttura della legge. Per ottenere la legge (a meno del valore delle costanti) è necessario uno studio del sistema a partire dai principi primi che regolano tutti i fenomeni che sono coinvolti. In definitiva l'idengtificazione parametrica è sufficiente solo se sono verificate le seguenti condizioni
 \begin{itemize}
 \item è \textbf{possibile} ottenere una descrizione del sistema applicando i principi primi delle scienze
@@ -20,6 +38,7 @@ I casi in cui è sufficiente una identificazione parametrica sono i casi in cui 
 \item ci si accontenta della descrizione ottenuta applicando i principi primi delle scienze (rischio di tralasciare fenomeni importanti)
 \item la complessità delle leggi che si ottengono applicando i principi primi delle scienze non è tale da renderle inutilizzabili
 \end{itemize}
+
 Quando una di queste condizioni non è soddisfatta è possibile inserire nel processo di identificazione anche la ricerca della struttura del modello.
 A tale scopo si ipotizza una classe (abbastanza vasta) di strutture di modello
 e si lascia al processo di identificazione l’onere di scegliere quella che maggiormente si adatta
@@ -62,75 +81,117 @@ un sistema scegliendo il più adatto in un insieme M di modelli.
 Sia M una variabile aleatoria che rappresenta la legge che regola il vero sistema.
 L’obiettivo dell’identificazione bayesiana è quello di calcolare per ogni $m\in M$ la
 probabilità a posteriori
-\[P (M = m|Y )\]
+\begin{equation} P (M = m|Y )
+\end{equation}
 dunque complessivamente determinare la distribuzione della probabilità sull’insieme
 dei modelli condizionatamente alle misure.
 La probabilità condizionata è stata definita in termini della probabilità congiunta e
 marginale dei due eventi
-\[P (M = m|Y ) =
+\begin{equation}
+P (M = m|Y ) =
 P (M = m, Y )
-P (Y )\]
+P (Y )
+\end{equation}
+
 la definizione corrisponde all’idea ragionevole
-\[P (M = m|Y ) \propto P (M = m, Y )\]
-Avendo per’inferenza bayesiana è un approccio all’inferenza statistica in cui le probabilit`a
-non sono interpretate come frequenze ma piuttosto come livelli di fiducia nel ver-
-ificarsi di un dato evento. Il nome deriva dal teorema di Bayes, che costituisce il
-fondamento di questo approccio. Gli statistici bayesiani sostengono che i metodi
-dell’inferenza bayesiana rappresentano una formalizzazione del metodo scientifico,
-che normalmente implica la raccolta di dati che avvalorano o confutano una data
-ipotesi.
-Queste caratteristiche rendono l’approccio bayesiano un utile ausilio per discrim-
-inare tra alternative in conflitto e dunque un ottimo strumento per l’identificazione
-dei sistemi.
-Il metodo usa una stima del grado di fiducia in una data ipotesi prima dell’osservazione
-dei dati al fine di associare un valore numerico al grado di fiducia in quella stessa
-ipotesi successivamente all’osservazione dei dati. Si supponga di voler identificare
-un sistema scegliendo il pi`
-u adatto in un insieme M di modelli.
-Sia M una variabile aleatoria che rappresenta la legge che regola il vero sistema.
-L’obiettivo dell’identificazione bayesiana è quello di calcolare per ogni $m\in M$ la
-probabilit`a a posteriori
-\[P (M = m|Y )\]
-dunque complessivamente determinare la distribuzione della probabilit`a sull’insieme
-dei modelli condizionatamente alle misure.
-La probabilit`a condizionata è stata definita in termini della probabilit`a congiunta e
-marginale dei due eventi
-\[P (M = m|Y ) =
-P (M = m, Y )
-P (Y )\]
-la definizione corrisponde all’idea ragionevole
-\[P (M = m|Y ) \propto P (M = m, Y )\]
-Avendo però ristretto l’insieme di supporto su cui è definita la metrica di probabilit`a,
-è necessario imporre che valgano ancora gli assiomi della probabilit`a, in particolare
-chiamando k la costante di proporzionalit`a e integrando su tutti i casi possibili si ha
-\[P (M = m|Y )dm =
-k \cdot P (M = m, Y )dm = k \cdot P (Y ) := 1\]
+\begin{equation}
+P (M = m|Y ) \propto P (M = m, Y )
+\end{equation}
+
+Avendo però ristretto l’insieme di supporto su cui è definita la metrica di probabilità,
+è necessario imporre che valgano ancora gli assiomi della probabilità, in particolare
+chiamando k la costante di proporzionalità e integrando su tutti i casi possibili si ha
+\begin{equation}P (M = m|Y )dm =
+k \cdot P (M = m, Y )dm = k \cdot P (Y ) := 1\end{equation}
 da cui si ricava il valore di k
-\[k =
-\frac{1}{P(Y)}\]
+\begin{equation}k =
+\frac{1}{P(Y)}
+\end{equation}
 ottenendo la definizione di probabilità condizionata.
 Scambiando i ruoli delle variabili aleatorie si ha anche che
+\begin{equation}
 P (Y |M = m) =
 P (M = m, Y )
 P (M = m)
-(2.2)
-dunque mettendo insieme le equazioni (2.1) e la (2.2) si ottiene la formula di Bayes
-P (M = m|Y ) =
-P (Y |M = m)P (M = m)
-P (Y )
-(2.3)
-usando il teorema della probabilit`a totale si pu`o inoltre esprimere la costante al
-denominatore in funzione delle quantit`a al numeratore ottenendo
-P (M = m|Y ) =
-P (Y |M = m)P (M = m)
-P (Y |M = m)P (M = m)dm
-(2.4)
-Nei problemi di identificazione l’espressione della probabilit`a a posteriori è quasi
+\end{equation}
+
+
+dunque mettendo insieme le equazioni [EQUAZIONI] si ottiene la formula di Bayes
+\begin{equation}
+P (M = m|Y ) =\frac{
+P (Y |M = m)P (M = m)}{
+P (Y )}
+\end{equation}
+
+usando il teorema della probabilità totale si pu`o inoltre esprimere la costante al
+denominatore in funzione delle quantità al numeratore ottenendo
+\begin{equation}
+P (M = m|Y ) =\frac{
+P (Y |M = m)P (M = m)}{\int
+P (Y |M = m)P (M = m)dm}
+\end{equation}
+Nei problemi di identificazione l’espressione della probabilità a posteriori è quasi
 sempre impossibile da valutare analiticamente sopratutto per colpa dell’integrale al
 denominatore che deve essere calcolato su tutti i possibili modelli; si ricorre quindi a
 metodi numerici di tipo Monte Carlo basati sul campionamento della distribuzione.
 Spesso risulta impossibile anche campionare direttamente la distribuzione e se ne
 deve ottenere una stima accettando o scartando opportunamente i campioni estratti
-da una distribuzione pi`
-u semplice.
+da una distribuzione più semplice.
+\section{Idea dei metodi Monte Carlo}
+I metodi Monte Carlo sfruttano il seguente ragionamento: se si vuole  campionare una distribuzione con densità $p(x)$ (nel nostro caso la posterior sui modelli) si ha
+\begin{equation}
+p(x)=p(x)\otimes \delta(x)=\int_\xi p(\xi)\delta(x-\xi)d\xi
+\end{equation}
+se poi $p(x)$ è fattorizzabile come \begin{equation}
+p(x)=q(x)g(x)
+\end{equation}
+tale che $q(x)$ sia una densità di probabilità ovvero
+\begin{itemize}
+\item $q(x)>0$ per ogni $m$
+\item $\int_m q(x)=1$
+\end{itemize} allora
+\begin{equation}
+p(x)=\int_\xi q(\xi)g(\xi)\delta(x-\xi)= E[g(Q)\delta(x-Q)]
+\end{equation}
+con $Q$ variabile aleatoria avente come densità $q(\cdot)$.
+Usando uno stimatore si può approssimare il valore atteso come
+\begin{equation}
+E[g(Q)\delta(x-Q)]\simeq \frac{1}{N}\sum_{k=1}^N g(q_k)\delta(x-q_k)
+\end{equation}
+con $q_k\sim q(\cdot)$ campione estratto dalla distribuzione di densità di proposal $q(\cdot)$
+In pratica si estraggono numerosi modelli da una distribuzione di proposal $q(\cdot)$,
+e si costruisce un istogramma pesato con i pesi 
+\begin{equation}
+g(q_k)=\frac{p(q_k)}{q(q_k)}
+\end{equation}
+Si noti che nella formula dei pesi la desnsità  $p(\cdot)$ è solamente una funzione da valutare in uno specifico modello, cosa che quasi sempre è fattibile  perchè richiede una informazione che è locale nello spazio dei modelli, al contrario del problema di campionare direttamente la densità che richiederebbe una conoscenza della funzione su tutto lo spazio.\\
+\section{Importance sampling: scelta della proposal}
+In teoria le precedenti considerazioni sono già sufficienti per campionare la distribuzione, in pratica la scelta di una proposal opportuna è critica per l'accuratezza dell'algoritmo. Nella realtà, avendo a disposizione un tempo limitato, e quindi un numero limitato di campionisi otterrà una approssimazione della distribuzione cercata.
+La proposal è determinante nell'imporre alcuni criteri di approssimazione\\
+Partendo dal presupposto ovvio che non è possibile esplorare esaustivamente lo spazio dei modelli, bisogna fare delle assuzioni su quali regioni dello spazio dei modelli esplorare maggiormente (e quindi descrivere) e quali invece trascurare.\\
+E' sensato disinteressarci delle regioni in cui i modelli hanno bassa probabilità.
+Ai fini dell'identificazione, non ci interesserà mai confrontare due modelli con probabilità bassa. Si può benissimo sbagliare o ignorare il rapporto reciproco tra le loro probabilità per concentrarsi sulla descrizione delle regioni dove i modelli hanno probabilità più alta.
+Questo induce a scegliere la proposal quanto più simile alla posterior, in modo da estrarre campioni prevalentemente dove la posterior è alta.
+Tale criterio è detto di \emph{importance sampling}.\\ \\
+Al limite se riuscissi ad essere sicuro che sto campionando da $q(\cdot)=p(\cdot)$ 
+avrei che i pesi si ridurrebbero a
+\begin{equation}
+g(q_k)=\frac{p(q_k)}{q(q_k)}=\frac{p(q_k)}{p(q_k)}=1
+\end{equation}
+e dunque
+\begin{equation}
+p(x)\simeq \frac{1}{N}\sum_{k=1}^N \delta(x-q_k)
+\end{equation}
+Ovvero potrei avere una approssimazione di $p(\cdot)$ semplicemente valutando la frequenza relativa con cui è stato estratto $q_k=x$.
+Attenzione, l'ipotesi di sapere che $q(\cdot)=p(\cdot)$ non vuol dire che conosco la forma della funzione su tutto lo spazio, ma solo che
+\begin{itemize}
+\item so valutare la funzione in un particolare modello
+\item ho un metodo (anche indiretto) per campionare la funzione
+\end{itemize}
+
+Gli algoritmi Monte Carlo Markov Chain infatti ottengono i modelli $q_k$ 
+come stati di una catena di Markov opportunamente costruita sullo spazio dei modelli. A tale catena si chiede di avere come unica probabilità di regime proprio $p(\cdot)$.\\
+Dopo un transitorio iniziale la catena finirà di fatti per campionare i suoi stati dalla distribuzione di regime $p(\cdot)$.
+\include{1MetropolisHastings}
+\include{RJMCMC}
 \end{document}

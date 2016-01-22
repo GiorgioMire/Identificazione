@@ -1,0 +1,23 @@
+\chapter{Reversible Jump Monte Carlo Markov Chain}
+Nelle sezioni precedenti la transizione della catena associava (in maniera aleatoria)
+uno stato di $M\subset \mathbb{R}^n$ ad uno stato di  $M'\subset \mathbb{R}^n$ .
+Cosa succede se la transizione dovesse associare uno stato $M\subset \mathbb{R}^n$ ad uno stato
+di $M\subset \mathbb{R}^m$ con $ m = n$?
+La questione scaturisce dal fatto che per gli scopi dell’identificazione dei sistemi,
+restringersi al caso $m = n$ `e molto limitativo e corrisponde a conoscere in partenza
+il numero dei parametri da identificare.
+Per i sistemi non lineari spesso si considerano modelli del sistema che sono sviluppi
+polinomiali di equazioni alle differenze e si lascia all’algoritmo di identificazione
+l’onere di determinare quali e quanti termini dello sviluppo includere.
+In base al numero di termini scelti si avranno da scegliere anche altrettanti coeffici-
+enti dello sviluppo.
+Quando l’algoritmo suggerisca di aggiungere o eliminare uno (o pi`u) termini dello
+sviluppo `e necessario aggiornare anche la dimensione del vettore dei coefficienti.
+Ecco quindi che acquistano senso mosse che portano lo stato della catena da uno
+spazio con una certa dimensionalit`a ad un’altro con dimensionalit`a diversa.
+Si pensi quindi di enumerare le tipologie di modello (anche infinite), si avr`a che
+l’insieme delle possibili strutture di modello `e rappresentabile come un insieme di
+indici
+\begin{equation*}
+K=\left\lbrace 1,2,\dots k \right\rbrace
+\end{equation*}

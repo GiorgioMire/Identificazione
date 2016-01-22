@@ -1,0 +1,102 @@
+\chapter{Algoritmo Metropolis Hasting}
+Supponiamo di voler estrarre campioni da una distribuzione p(m) nota, difficile da
+campionare direttamente.
+Si pu`o chiedere che la distribuzione obiettivo sia
+distribuzione di regime di una catena di Markov. Una catena si dice ergodica se
+dopo un certo tempo (transitorio iniziale) , essa converge all'unica distribuzione
+di regime indipendentemente dalla distribuzione di partenza.
+Le condizioni necessarie per l’ergodicit`a della catena sono:
+\begin{itemize}
+\item \textbf{irriducibilit`} : la probabilit`a di visitare ciascuno stato a partire da ciascuno
+stato `e strettamente positiva
+\item \textbf{aperiodicità} : una catena `e periodica se pu`o ritornare in un certo stato solo
+a istanti multipli di un qualche intero maggiore di 1. Una catena `e aperiodica
+se non `e periodica.
+\end{itemize}
+
+In poche parole, fissato un qualsiasi istante abbastanza grande e un qualsiasi stato,
+deve essere possibile una storia temporale della catena che la porta a risiedere in
+quello stato a quell’istante. La questione diventa quindi come scegliere il kernel
+\begin{equation*}
+s(x' |x) 
+\end{equation*}
+(probabilit`a di transizione dal vecchio stato m al nuovo stato m' ) della catena,
+in modo che la catena sia ergodica e che la distribuzione di regime sia proprio p(m).
+Una condizione sufficiente non necessaria `e che la distribuzione obiettivo soddisfi la
+condizione di reversibilit`a
+
+\begin{equation}
+p(x)s(x' |x) = p(x')s(x|x' )
+\end{equation}
+
+L'operatore di transizione è quello che nelle catene a stato discreto e finito era rappresentato dalla matrice di transizione mentre nelle catene a stato continuo è il funzionale
+\begin{equation}
+Tr[\bullet]=\int \bullet(x)s(x'|x)dx
+\end{equation}
+Una  densit`a di probabilit`a $\ph$ `e detta stazionaria se `e autofunzione
+dell’operatore di transizione della catena, ovvero\\
+\begin{equation}
+Tr[\ph]=\ph
+\end{equation}
+e semplice dimostrare che se vale la condizione di reversibilit`a allora la distribuzione
+`e stazionaria infatti
+\begin{equation*}
+\begin{split}
+Tr[\ph]=\int \ph(x)s(x'|x)dx=\int \ph(x')s(x|x')dx=\\
+\ph(x')\int s(x|x')dx=\ph(x')\cdot 1=\ph(x')
+\end{split}
+\end{equation*}
+
+Se si sceglie un kernel arbitrario uguale ad una probabilit`a di transizione facile
+da campionare $s(\direct) = q(\direct) $ solitamente la condizione di reversibilit`a non `e
+soddisfatta. Solitamente si ha uno sbilanciamento che significa che alcune transizioni
+sono pi`u probabili in un certo verso.
+\begin{equation}
+\ph(x)s(\direct)>\ph(x')s(\inverse)
+\end{equation}
+
+In tal caso, viste le distribuzioni di partenza e la probabilit`a di transizione scelta `e
+pi`u probabile osservare la transizione $x\rightarrow x'$ piuttosto che la transizione $x'\rightarrow x$
+Si cerca quindi di ristabilire l’equilibrio scegliendo come kernel la probabilit`a di
+transizione moltiplicata per un fattore correttivo 
+\begin{equation}
+q(\direct) = \gamma(\direct)q(\direct)
+\end{equation}
+In particolare si pu`o interpretare $\gamma(\direct)$ come la probabilit`a di accettare la mossa $x \rightarrow x'$. Imponendo quindi che valga
+
+
+\begin{equation}
+\ph(x)\gamma(\direct)q(\direct)=\ph(x')\gamma(\inverse)q(\inverse)
+\end{equation}
+si ricava
+\begin{equation}
+\frac{\gamma(\direct)}{\gamma(\inverse)}=\frac{\ph(x')q(\inverse)}{\ph(x)q(\direct)}
+\end{equation}
+
+Perch`e si abbia coerenza con la eq[CITARE EQUAZIONE] bisogna che il rapporto al membro sinistro sia minore di 1. In particolare si può scegliere
+
+\begin{itemize}
+\item $\gamma(\inverse)=1$ che equivale ad accettare tutte le transizioni $m' \rightarrow m$ che sono meno
+frequenti
+\item $\gamma(\direct)=min\left\lbrace 1,\frac{\ph(x')q(\inverse)}{\ph(x)q(\direct)}\right\rbrace$ fattore di riduzione delle transizioni pi`u frequenti
+\end{itemize}
+ L'algoritmo MH è così definito  \\
+\hrule 
+\textbf{Algoritmo} Metropolis Hastings
+\hrule
+\begin{algorithmic}
+\State Inizializza  $X_0=x_0$
+\For {$t=0,1,2\dots T$}
+    \State $i\gets 0$
+
+\State Estraggo la proposta per il nuovo stato $x^t \sim q(x^t |X_t)$
+\State Calcolo la probabilità di accettare la mossa $\gamma(\direct)=min\left\lbrace 1,\frac{\ph(x^t)q(X_t | x^t)}{\ph(X_t)q(x^t|X_t  )}\right\rbrace$
+\State Estraggo una variabile da una distribuzione uniforme $u\sim U(0,1)$
+\If {$u \leq \gamma(x^t | X_t)$}
+ \State La catena transita nel nuovo stato proposto $X_{t+1}=x^t$
+\Else
+\State La catena rimane nel vecchio stato $X_{t+1}=X_t$
+\EndIf
+\EndFor
+\end{algorithmic}
+
