@@ -1,0 +1,267 @@
+\chapter{Il modello}
+\section{Modello Narmax}
+Grazie all’uso di un modello esplicito di rumore, il modello NARMAX `e in grado
+di modellare l’effetto di rumori non bianchi, correlati a causa delle nonlinearit`a del
+sistema.
+Un sistema SISO tempo discreto pu`o essere rappresentato da un modello NARMAX
+descritto da
+\begin{equation}
+y_t=f(y_{t-1},\dots, y_{t-n_y},y_{t-1},\dots, y_{t-n_y},e_{t-1},\dots, e_{t-n_e})+e_t
+\label{narmax}
+\end{equation}
+dove si assume che $f(\cdot)$ sia una funzione non lineare sconosciuta, $u_t\in\mathbb{R}$ e $y_t\in\mathbb{R}$ siano gli ingressi e uscite del sistema e $e_t\in\mathbb{R}$ denota un termine di rumore estratto dalla distribuzione normale $\normal{0}{\sigma_e^2}$.\\
+Gli ordini della dinamica sono rispettivamente $n_u,n_y,n_e$.
+Decomponiamo la funzione f (·) in una somma di funzioni di base polinomiali e
+riesprimiamo la \ref{narmax} come combiaione di termini di processo e di rumore,
+\begin{equation}
+y_t=\sum_{j=1}^{M_p}\left(a_j y_{t-	\delta_{y,j}}^{k_{y,j}} u_{t-	\delta_{u,j}}^{k_{u,j}}\right)+
+\sum_{j=1}^{M_e}\left(b_j y_{t-	\delta_{y,j}}^{k_{y,j}} u_{t-	\delta_{u,j}}^{k_{u,j}}
+e_{t-	\delta_{e,j}}^{k_{e,j}}\right)+e_t
+\end{equation}
+
+dove il modello di processo `e composto da $M_p$ monomi combinazione di soli termini
+di uscita e di rumore e il modello di rumore `e composto da $M_e$ monomi combinazione
+di ingresso, uscita e rumore. Con $k_{y,j}$ , $k_{u,j}$ , $k_{e,j}\in N$ si indicano le potenze che compaiono nei monomi, con $\delta_{ y,j}$ , $\delta_{ e,j}\in \mathbb{N}-\{0\}$ e
+$\delta_{ u,j}\in \mathbb{N}$ il ritardo delle varie grandezze.
+
+\section{Equazione di regressione}
+Data una sequenza di N ingressi
+\begin{equation}
+\{u(1) u(2) u(3) u(4) \dots u(N )\}
+\end{equation}
+e N uscite
+\begin{equation}
+\{y(1) y(2) y(3) y(4) \dots y(N )\}
+\end{equation}
+si hanno a disposizione
+\begin{equation}
+N-max\{n_u , n_y , n_e \}
+\end{equation}
+equazioni.\\
+Per esempio se l’insieme dei termini di processo scelti fosse
+\begin{equation}
+\mathcal{P} = \{y^2(t - 1), y(t - 2)u(t)\}
+\end{equation}
+e l’insieme dei termini di rumore
+\begin{equation}
+\mathcal{E}= {e^3 (t - 1)u(t - 1)}
+\end{equation}
+e si avessero a disposizione gli ingressi
+\begin{equation}
+u = \{u(1), u(2), u(3), u(4), u(5), u(6)\} 
+\end{equation}
+e le uscite
+\begin{equation}
+y = \{y(1), y(2), y(3), y(4), y(5), y(6)\}
+\end{equation}
+Si avrebbero a disposizione le equazioni di regressione
+\begin{equation}
+\begin{bmatrix}
+y(6) \\ 
+y(5) \\ 
+y(4) \\ 
+y(3)
+\end{bmatrix}=
+\begin{bmatrix}
+y^2(5) & y(4)u(6) \\ 
+y^2(4) & y(3)u(5)\\ 
+y^2(3)& y(2)u(4) \\ 
+y^2(2)& y(1)u(3)
+\end{bmatrix}
+\begin{bmatrix}
+a_1 \\ a_2 
+\end{bmatrix}+
+\begin{bmatrix}
+e^3(5)u(5) \\ 
+e^3(4)u(4) \\  
+e^3(3)u(3) \\  
+e^3(2)u(2) \\ 
+\end{bmatrix}b_1+
+\begin{bmatrix}
+\epsilon(6) \\ 
+\epsilon(5) \\
+\epsilon(4) \\
+\epsilon(3) \\
+\end{bmatrix}
+\end{equation}
+che possono essere scritte compattamente in forma matriciale come
+\begin{equation}
+\y=\pk\ak+\eq\bq+\epsilon
+\end{equation}
+\section{Densit`a di probabilit`a a posteriori del modello}
+\begin{equation}
+p(k, q, \pk , \eq, \ak , \bq |\y) \propto p(\y|k, q, \pk ,\eq , \ak, \bq , \ve )p(k, q, \pk, \eq,\ak,\bq )
+\end{equation}
+\subsection{Likehood}
+Se il rumore `e gaussiano a media nulla anche la verosimiglianza `e una gaussiana, fun-
+zione del vettore dei residui, di stessa varianza. Infatti come si deduce dall’equazione
+di regressione [CITARE EQUAZIONE] si ha
+\begin{equation}
+p(\y|k,\,\pk,eq,\ak,\bq,\ve)=p(\pk\ak+\eq\bq+\epsilon|k,q,\pk,\eq,\ak,\bq,\ve)=p(\epsilon|k,q,\pk,\eq,\ak,\bq,\ve)
+\end{equation}
+e supponendo di aver identificato correttamente i termini e i parametri in modo tale
+da avere come errore residuo (ineliminabile) il rumore di misura si ha
+\begin{equation}
+p(\textbf{e}|k, q, \pk , \eq , \ak , \bq , \ve ) = p(\epsilon |k, q, \pk , \eq , \ak , \bq , \ve )=\frac{1}{\sqrt{2\pi\ve}^N}exp\left(-\frac{1}{2\ve}\epsilon^T\epsilon\right)
+\end{equation}
+dunque in definitiva
+\begin{equation}
+p(\y|k,\,\pk,eq,\ak,\bq,\ve)=\frac{1}{\sqrt{2\pi\ve}^N}exp\left(-\frac{1}{2\ve}\epsilon^T\epsilon\right)
+\end{equation}
+con
+\begin{equation}
+\epsilon=\y-\pk\ak-\eq\bq
+\end{equation}
+\section{Scelta delle distribuzioni a priori e iperparametri}
+In assenza di preferenze, la scelta delle distribuzioni a priori solitamente ricade su
+distribuzioni poco informative ovvero densit`a con un supporto ampio e varianza
+grande.\\
+Per aumentare la flessibilit`a si adotta una struttura gerarchica in cui gli stessi
+parametri delle distribuzioni a priori sono a loro volta realizzazioni di variabili aleato-
+rie. Per convenienza si sceglie di rappresentare i parametri con una distribuzione a
+prori coniugata della likehood.
+\section{Il concetto di distribuzioni coniugate}
+Sia X una variabile che modella il sistema estratta da una distribuzione $p(X|\zeta) =
+f (\zeta, \cdot)$ dipendente dal parametro $\zeta$.
+Al livello gerarchico pi`
+u alto $p(X|\zeta)$ rappresenta la probabilit`a a priori (rispetto alle
+misure) della variabile X .
+L’ipotesi sul’andamento della funzione $f$ si suppone quindi gi`a fatta a tale livello
+gerarchico.
+Al livello gerarchico inferiore la stessa $p(X|\zeta)$ rappresenta invece la likehood ( \textit{dalla
+forma nota!! }) del parametro $\zeta$ . La scelta della forma del prior $p(\zeta)$ non `e quindi
+indipendente dalla scelta del posterior $p(\zeta|X)$, infatti
+\begin{equation}
+p(\zeta|X)\propto p(X|\zeta)p(\zeta)
+\end{equation}
+La distribuzione $p(X|\zeta)$ `e quindi un operatore che mappa una funzione in un’altra
+funzione. E’ possibile per tale operatore trovare una sorta di \emph{autofunzione}, nel senso
+pi`
+u lato di distribuzione appartenente a una certa famiglia (normale, uniforme, pois-
+son etc ) che viene mappata dall’operatore in un’altra funzione ancora appartenete
+alla medesima famiglia.
+Data una certa likehood le sue \emph{autofunzioni} in questo senso, vengono dette dis-
+tribuzioni coniugate.
+Se i prior sono scelti tra le distribuzioni coniugate, quando (mediante l’applicazione
+dell’operatore likehood) evolvono non cambiano la forma d’onda ma solo i parametri
+che la descrivono. Quindi la descrizione di una dinamica su uno spazio funzionale a
+infinite dimensioni viene rappresentata dalla dinamica in uno spazio il cui numero di
+dimensioni `e finito e ridotto. (Ad esempio l’evoluzione di una gaussiana pu`o essere
+rappresentata concisamente dall’evoluzione del suo valor medio e della sua varianza).\\
+Se  i prior non sono scelti tra le distribuzioni coniugate, invece, ad ogni applicazione
+dell’operatore likehood cambia l’intera forma d’onda della distribuzione diventando
+impossibile da descrivere analiticamente.
+\subsection{Probabilit`a del modello a priori}
+Modificando leggermente la [CITARE EQUAZIONE] per tenere conto anche degli iperparametri (de-
+stritti nel dettaglio in questa sezione) si ha
+\begin{equation}
+p(k,q,\pk,eq,\ak,\bq,\va,\vb,\la,\lb|\y)\propto
+p(\y|k,q,\pk,ak,\bq,ve)
+p(k,q,\pk,\eq,\ak,\bq,\va,\vb,\la,\lb)
+\end{equation}
+fattorizzabile come
+\begin{align}
+p(k,q,\pk,eq,\ak,\bq,\va,\vb,\la,\lb|\y)= & p(\ak|\pk,k,\va)p(k|\la)p(\pk)p(\la)p(\va)\times \nonumber\\
+& p(\bq|\eq,q,\vb)p(q|\lb)p(\eq)p(\lb)p(\vb)
+\end{align}
+Di seguito vediamo nel dettaglio come sono state modellate le distribuzioni a priori
+\subsection*{Vettore dei parametri dei termini di modello}
+Il vettore di parametri $\ak$ si assume distribuito come una gaussiana multidimension-
+ale isotropica a media nulla ovvero
+\begin{equation}
+p(\ak|k, \pk , \va ) = p(\ak |k, \va ) \sim \normal{\textbf{0}}{\va\textbf{I}}
+\end{equation}
+Questa scelta implica che la varianza della gaussiana sia distribuita come una gamma
+inversa in modo da essere coniugata. La distribuzione gamma inversa `e definita come
+segue
+\begin{equation}
+\mathcal{I}\mathcal{G}(x|\alpha,\beta)= x^{-\alpha-1}\exp\left(-\frac{\beta}{x}\right)
+\end{equation}
+Di seguito si prova che la distribuzione gamma inversa `e effettivamente coniugata
+della gaussiana per l’iperparametro varianza\\
+\textit{Proof.} `e sufficiente applicare la regola di Bayes e ottenere ancora una gamma inversa
+\begin{align*}
+p(\va|k,\ak) & \propto p(\ak,k,\va)\cdot p(\va)\\
+			 &\propto   \frac{1}{\sqrt{\va}^k}exp\left(\frac{-\ak^T\ak}{2\va}\right)\sigma_a^{2(-\alpha_a-1)}exp\left(-\frac{\beta_a}{\va}\right)\\
+			 &\propto  \sigma_a^{2(-\alpha_a-1-\frac{1}{2}k)}exp\left(-\frac{\beta_a+\frac{1}{2}\ak^T\ak}{\va}\right) \\ 
+			 &\propto   \sigma_a^{2(-\alpha_a-1-\frac{1}{2}k)}exp\left(-\frac{\beta_a+\frac{1}{2}\ak^T\ak}{\va}\right) \\
+			 &\propto \mathcal{I}\mathcal{G}(\va|\alpha+\frac{1}{2}k,\beta_a+\frac{1}{2}\ak^T\ak)	
+\end{align*}
+ \begin{flushright}
+ $\square$
+ \end{flushright}
+
+ \subsection*{Vettore dei parametri dei termini di rumore}
+ La modellazione del vettore dei parametri dei termini di rumore `e analoga a quella
+trattata nella sottosezione precedente. Il vettore di parametri $\bq$ si assume dis-
+tribuito come una gaussiana multidimensionale isotropica a media nulla
+\begin{equation}
+p(\bq |k, \eq , \vb ) = p(\bq |q, \vb ) \sim \normal{\textbf{0}}{\vb\textbf{I}}
+\end{equation}
+
+Questa scelta implica che la varianza della gaussiana sia distribuita come una gamma
+inversa in modo da essere coniugata. Con dimostrazione del tutto analoga alla
+sezione precedente si dimostra che la varianza della gaussiana deve essere una gamma
+inversa.
+\begin{align*}
+p(\vb)=\mathcal{I}\mathcal{G}(\vb|\alpha_b,\beta_b)\Rightarrow
+p(\vb|q,\bq) & \propto p(\bq,q,\vb)\cdot p(\vb)\\
+	 &\propto \mathcal{I}\mathcal{G}(\vb|\alpha_b+\frac{1}{2}q,\beta_b+\frac{1}{2}\bq^T\bq)	
+\end{align*}
+
+\subsection*{Numero di termini di processo}
+La probabilit`a a priori del numero di termini di processo `e rappresentata da una
+distribuzione di Poisson troncata, il parametro $\la$.
+\begin{equation}
+p(k|\la)=\frac{\frac{\la^k}{k!}}{\sum_{i=0}^N\frac{\la^i}{i!}}
+\end{equation}
+Con N numero massimo di termini di processo.
+Questo tipo di distribuzione `e pi`
+u indicato rispetto ad una distribuzione uniforme,
+perch`e l’iperparametro $\la$ pu`o essere interpretato come il numero medio di termini
+ipotizzando un numero di termini possibili sufficientemente alto infatti
+\begin{equation}
+\mathbb{E}[k|\la]=\frac{\sum_{k=0}^Nk\frac{\la^k}{k!}}{\sum_{i=0}^N\frac{\la^i}{i!}}=\frac{\sum_{k=1}^Nk\frac{\la^k}{k!}}{\sum_{i=0}^N\frac{\la^i}{i!}}=\la\frac{\sum_{j=0}^{N-1}k\frac{\la^j}{j!}}{\sum_{i=0}^N\frac{\la^i}{i!}}=
+\la\frac{\sum_{j=0}^{N-1}k\frac{\la^j}{j!}}{\sum_{i=0}^{N-1}\frac{\la^i}{i!}+\frac{\la^N}{N!}}=\la\frac{1}{1+\frac{\frac{\la^N}{N!}}{\sum_{i=0}^{N-1}\frac{\la^i}{i!}}}
+\end{equation}
+si noti che
+\begin{equation}
+\lim_{N\rightarrow\infty}\frac{\frac{\la^N}{N!}}{\sum_{i=0}^{N-1}\frac{\la^i}{i!}}=0
+\end{equation}
+L’iperparametro $\la$ `e estratto da una distribuzione gamma
+\begin{equation}
+p(\la)=\mathcal{G}\mathcal{A}(\la|\alpha_{\la},\beta_{la})=\la^{(\alpha_{\la}-1)}exp\left(-\frac{\la}{\beta_{\la}}\right)
+\end{equation}
+Di seguito dimostro che la distribuzione gamma `e coniugata per il parametro della
+poisson
+\textit{Proof.}
+\begin{align*}
+p(\la|k)&\propto p(k|\la)p(\la)\\
+&\frac{\la^k}{k!}\la^{(\alpha_{\la}-1)}exp\left(-\frac{\la}{\beta_{\la}}\right)
+&\propto\frac{1}{k!}\mathcal{G}\mathcal{A}(\la|\alpha_{\la}+k,\beta_{\la})
+\end{align*}
+ \begin{flushright}
+ $\square$
+ \end{flushright}
+ \subsection*{Numero di termini di rumore}
+ Analogamente a quanto detto nella sezione precedente, il numero dei termini di
+rumore `e modellato come una variabile aleatoria Poisson troncata
+\begin{equation}
+p(q|\lb)=\frac{\frac{\lb^q}{q!}}{\sum_{i=0}^N\frac{\lb^i}{i!}}
+\end{equation}
+e il suo iperparametro $\lb$ `e modellato come una variabile aleatoria gamma-distribuita
+\begin{equation}
+p(\lb)=\mathcal{G}\mathcal{A}(\lb|\alpha_{\lb}.\beta_{\lb})=\lb^{\alpha_{\lb}-1)}exp\left(-\frac{\lbrace}{\beta_{\la}}\right)
+\end{equation}
+\subsection*{Matrice di regressione dei termini di processo e di
+rumore}
+La matrice di regressione dei termini `e considerata una va aleatoria uniformemente
+distribuita in modo che nessun termine di modello n`e di rumore sia, a priori delle
+misure, pi`
+u probabile di altri
+\begin{equation}
+p(\pk)\propto 1
+\end{equation}
+\begin{equation}
+p(\eq )\propto 1
+\end{equation}

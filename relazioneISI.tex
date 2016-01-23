@@ -104,8 +104,8 @@ chiamando k la costante di proporzionalità e integrando su tutti i casi possibi
 \begin{equation}P (M = m|Y )dm =
 k \cdot P (M = m, Y )dm = k \cdot P (Y ) := 1\end{equation}
 da cui si ricava il valore di k
-\begin{equation}k =
-\frac{1}{P(Y)}
+\begin{equation}
+k =\frac{1}{P(Y)}
 \end{equation}
 ottenendo la definizione di probabilità condizionata.
 Scambiando i ruoli delle variabili aleatorie si ha anche che
@@ -190,8 +190,10 @@ Attenzione, l'ipotesi di sapere che $q(\cdot)=p(\cdot)$ non vuol dire che conosc
 \end{itemize}
 
 Gli algoritmi Monte Carlo Markov Chain infatti ottengono i modelli $q_k$ 
-come stati di una catena di Markov opportunamente costruita sullo spazio dei modelli. A tale catena si chiede di avere come unica probabilità di regime proprio $p(\cdot)$.\\
+come stati di una catena di Markov opportunamente costruita sullo spazio dei modelli. A tale catena si chiede di avere come unica probabilità di regime proprio $p(\cdot)$.\vspace{2em}
 Dopo un transitorio iniziale la catena finirà di fatti per campionare i suoi stati dalla distribuzione di regime $p(\cdot)$.
 \include{1MetropolisHastings}
 \include{RJMCMC}
+\include{Modello}
+\include{Algoritmo}
 \end{document}

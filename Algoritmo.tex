@@ -1,0 +1,191 @@
+\chapter{Algoritmo RJMCMC per
+l’identificazione di modelli
+NARMAX}
+
+ L'algoritmo MH è così definito\vspace{1em}\\
+\hrule 
+\textbf{Algorithm} RJMCMC for NARMAX identification
+\hrule
+
+
+
+\begin{algorithmic}
+\State fissa i parametri di tuning $c$ e $\ve$
+\State inizializza$\left(k^{(0)},q^{(0)},\pk^{(0)},\eq^{(0)},\ak^{(0)},\bq^{(0)},\la^{(0)},\lb^{(0)},\sigma_a^{(0)},\sigma_b^{(0)}\right)$
+\vspace{2em}
+\For {$i=1:N_{\text{iter}}$}
+    \State Estrai $z_k\sim \unif$
+    \If {$z_k\leq B_k^{(i)}$}
+    \State Effettua la mossa di nascita (Algoritmo 1)
+    \ElsIf{$z_k\leq B_k^{(i)}+D_k{(i)}$}
+\State Effettua mossa di morte (Algoritmo 2)
+\Else
+\State Aggiorna i parametri (Algoritmo 3)
+\State Aggiorna la varianza dei  parametri
+\EndIf
+\State Estrai $\lb^{(i)}\sim p(\lb|q^{(i)})$
+\vspace{2em}
+\If {$i>$}
+    \State Estrai $z_q\sim \unif$
+    \If {$z_q\leq B_q^{(i)}$}
+    \State Effettua la mossa di nascita (Algoritmo 1)
+    \ElsIf{$z_k\leq B_q^{(i)}+D_q{(i)}$}
+\State Effettua mossa di morte (Algoritmo 2)
+\Else
+\State Aggiorna i parametri (Algoritmo 3)
+\State Aggiorna la varianza dei  parametri
+\EndIf
+\EndIf
+\vspace{2em}
+\State Calcola l'errore residuo $\epsilon^{(i)}=\y-\pk^{(i)}\ak^{(i)}-\eq^{(i)}\bq^{(i)}$:assumilo come stima del segnale di  rumore
+\State Aggiornamento di $\eq^{(i)}$ in base alla nuova stima
+\EndFor
+\end{algorithmic}
+
+L’algoritmo parte con l’inizializzazione di parametri e iperparametri: solitamente si
+parte con un modello vuoto ovvero con nessun termine (di rumore e di processo),
+le matrici di regressione sono in tal caso (per convenzione) una singola colonna
+di elementi nulli e il vettore dei parametri `e lo scalare nullo. Gli iperparametri
+delle poisson troncate vengono inizializzati a quello che ci si aspetta essere il nu-
+mero medio di termini nello sviluppo, mentre le varianze dei coefficienti vengono
+inizializzate ad un valore non piccolo in modo da avere inizialmente dei prior molto
+dispersi e quindi poco informativi. L’inizializzazione di questi parametri non `e crit-
+ica perch`e essi verranno aggiornati con l’evoluzione della catena e si adatteranno al
+valore pi`
+u appropriato. La varianza $\ve$ del rumore bianco invece viene inizializzata
+e non viene pi`
+u aggiornata, tale parametro rappresenta infatti un parametro di tun-
+ing dell’algoritmo essendo in qualche modo una metrica di affidabilit`a delle misure,
+`e sensato dunque che esso influisca direttamente sulla probabilit`a di accettazione
+delle mosse: abbassare tale parametro equivale a ritenere l’incertezza bassa quindi
+il rapporto di accettazione sar`a pi`
+u selettivo e le mosse proposte verranno scartate
+pi`
+u frequentemente.
+L’algoritmo prevede un numero fissato a priori di iterazioni. In corrispondenza di
+ciascuna iterazione la catena di markov andr`a a risiedere in uno stato che rappre-
+senta un modello del sistema. L’assunzione di \textbf{ergodicità} permette di ricostruire la probabilit`a che la catena risieda in un particolare stato a partire dal
+numero di iterazioni medio in cui la catena risiede in quello stato. E’ necessario per`o
+adottare due accorgimenti:
+\begin{itemize}
+\item il numero di iterazioni deve essere abbastanza elevato da fare in modo che valga
+con buona approssimazione l’ipotesi di ergodicit`a. Se le statistiche si raccol-
+gono su poche iterazioni le probabilit`a che si ottengono sono molto influenzate
+dalla particolare realizzazione della catena.
+\item il numero medio di iterazioni in corrispondenza del quale la catena risiede in
+un particolare stato deve essere calcolato escludendo le prime iterazioni della
+catena (il cosiddetto periodo di burn-in ossia di riscaldamento), questo perch`e
+le prime iterazioni sono fortemente influenzate dalla particolare inizializzazione
+dei parametri e dello stato.
+\end{itemize}
+Nel contesto della singola iterazione eseguono due algoritmi analoghi: l’evoluzione
+del modello di processo e l’evoluzione del modello di rumore.
+Entrambi prevedono una fase in cui si seleziona la tipologia di mossa, una fase in cui
+si effettua la mossa scelta e infine una fase in cui si estrae un nuovo iperparametro
+per il numero medio di termini.
+Dopo che hanno eseguito questi algritmi si calcola il nuovo errore di regressione come
+differenza tra le uscite misurate del sistema e le uscite predette dal modello.
+Assumendo poi che il modello attuale sia capace di descrivere esattamente l’uscita
+misurata, si considera l’errore di regressione come se fosse l’attuale campione di ru-
+more gaussiano bianco e si aggiorna la matrice di regressione del rumore.
+Per ottenere l’output dell’identificazione basta tenere in memoria (a partire da
+quando si ritiene esaurito il transitorio iniziale) i modelli visitati dalla catena e
+costruire progressivamente gli istogrammi sul numero di termini, sull’identificativo
+dei termini e sul coefficiente associato a ciascun identificativo dei termini. Di seguito
+si illustrano le tipologie di mossa previste, il meccanismo di scelta della tipologia di
+mossa e nelle sezioni seguenti si entra nel dettaglio di come vengono effettuate le
+mosse.
+\subsection{Tipologia di mosse}
+Le mosse che modificano lo stato della catena, nell’algoritmo dell’articolo sono:
+\begin{itemize}
+\item Nascita:\\
+Viene selezionato un nuovo termine tra quelli rimasti e viene inserito nello
+sviluppo polinomiale, togliendolo dall’insieme dei termini disponibili per una
+futura mossa di nascita. Il numero di termini del modello passa da $k$ a $k' =
+k + 1$.\\
+I coefficienti dello sviluppo vengono estratti nuovamente
+\item Morte:\\
+Viene selezionato un nuovo termine tra quelli presenti nello sviluppo polino-
+miale e viene eliminato reinserendolo nell’insieme dei termini disponibili per
+una successiva mossa di nascita. Il numero di termini del modello passa da $k$
+a $k' = k-1$\\
+I coefficienti dello sviluppo vengono estratti nuovamente
+\item Aggiornamento:\\
+Non si ha cambio di dimensionalit`a $k'=k$
+Vengono solamente cambiati i coefficienti dello sviluppo e la varianza della
+distribuzione da cui sono estratti.
+\end{itemize}
+Mosse analoghe sono previste per i termini di rumore.
+Ad ogni iterazione della catena,viene estratta una delle tre mosse.\\
+La mossa di nascita viene estratta con probabilità $B_k$ dove
+\begin{equation}
+B_k=\begin{cases}
+1 & k=0\\
+0 & k=M_p\\
+c\cdot\min\left\lbrace 1,\frac{p(k+1|\la}{p(k|\la)}\right\rbrace & text{altrimenti}
+\end{cases}
+\end{equation}
+La mossa di morte viene estratta con probabilità
+\begin{equation}
+D_k=\begin{cases}
+0 & k=0\\
+c\cdot\min\left\lbrace 1,\frac{p(k-1|\la}{p(k|\la)}\right\rbrace & text{altrimenti}
+\end{cases}
+\end{equation}
+La mossa di aggiornamento viene estratta con probabilit`a
+\begin{equation}
+U_k=1-B_k-D_k
+\end{equation}
+La costante c serve per regolare la frequenza relativa tra mosse che cambiano la
+dimensionalit`a (morte e nascita) e la mossa di aggiornamento.\\
+La scelta delle probabilit`a di nascita e di morte garantisce che
+\begin{equation}
+B_k p(k|\lambda)=D_{k+1}  p(k+1|\lambda) \label{equilibr_dimensi}
+\end{equation}
+
+La (\ref{equilibr_dimensi}) `e una equazione di equilibrio bilanciato per il solo numero di termini.
+Questo vuol dire che se si avesse solo l’informazione del numero di termini (nessuna
+informazione sui coefficienti o sul tipo di termini,quindi nessuna idea sull’errore di
+regressione) la probabilit`a del numero di termini convergerebbe alla distribuzione a
+priori. In realt`a nelle prossime sezioni si aggiunger`a un meccanismo di accettazione
+o rifiuto delle mosse che va di fatto ad alterare la probabilit`a di regime del numero
+di termini in modo da tenere conto anche dell’errore di regressione (informazione
+delle misure) pi`
+uttosto che delle sole informazioni a priori.
+\subsection{Estrazione di una tipologia di mossa}
+L’estrazione della tipologia di mosse deve avvenire con le probabilit`a B k , U k , D k
+calcolate come descritto nella sezione precedente. Un modo semplice per imporre
+tale probabilit`a `e la seguente:\\
+
+\begin{algorithmic}
+\State Estrai $z_k\in\unif$
+\If {$z_k\leq B_k$}
+\State Effettuare la mossa di nascita
+\ElsIf {$B_k<z_k\leq B_k+D_k$}
+\State Effettuare la mossa di morte
+\Else
+\State Effettuare la mossa di aggiornamento
+\EndIf
+\end{algorithmic}
+per mostrare che si ottengono effettivamente le probabilit`a cercate basta integrare
+tra gli estremi opportuni la ddp della variabile uniforme che `e un l’impulso
+rettangolare
+\begin{equation}
+P\left(0<z_k\leq B_k^{(i)}\right)=\int_0^{B_k^{(i)}}rect(z-0.5)dz=\int_0^{B_k^{(i)}}dz={B_k^{(i)}}
+\end{equation}
+\begin{equation}
+P\left(B_k^{(i)}<z_k\leq B_k^{(i)}+D_k^{(i)}\right)=\int_{B_k^{(i)}}^{B_k^{(i)}+D_k^{(i)}}rect(z-0.5)dz=\int_0^{D_k^{(i)}}dz={D_k^{(i)}}
+\end{equation}
+
+\begin{equation}
+P\left(B_k^{(i)}+D_k^{(i)}<z_k\leq 1 \right)=\int_{B_k^{(i)}+D_k^{(i)}}^{1}rect(z-0.5)dz=\int_{B_k^{(i)}+D_k^{(i)}}^{1}dz=1-{B_k^{(i)}}-{D_k^{(i)}}=U_k^{(i)}
+\end{equation}
+con
+\begin{equation}
+rect(z)=\begin{cases}
+0 & abs(z)\leq 0.5\\
+1 & abs(z)>0.5 
+\end{cases}
+\end{equation}
+
+\section{Mossa di nascita}
