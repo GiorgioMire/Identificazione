@@ -1,0 +1,74 @@
+\section{Equazione del candidato di Besag}
+La formula utilizzata per semplificare l’espressione del rapporto $r_a$ `e detta formula
+del candidato. Il nome le `e stato attribuito dal professore e statista Julian Ernst
+Besag a fine anni ’80 quando era docente alla University of Durham. Egli riporta
+la formula in un articolo spiegando di averla letta (senza dimostrazione) nello svol-
+gimento di un esame da parte di uno studente del quale per`o non ricordava pi`
+u il
+nome. Non sapremo quindi mai chi fu il primo ad averla pensata. Nonostante anche
+Besag tralasci la dimostrazione della formula, questa non `e complessa e deriva in
+sostanza dalla formula di Bayes applicata opportunamente alla densit`a congiunta
+delle tre variabili in gioco.
+Si supponga di aver raccolto un vettore di misurazioni x ,sia $\theta$ un vettore di parametri
+del modello, ci si chiede quale sia la densit`a di probabilit`a di una nuova misura z
+condizionata alle vecchie misure ovvero $p(z|x)$
+
+tesi:
+\begin{equation}
+p(z|x)=\frac{p(z|\theta)p(\theta|x)}{p(\theta|z,x)}
+\end{equation}
+dimostrazione: Dalla definizione di ddp condizionata
+\begin{equation}
+p(z|x)=\frac{p(z,x)}{p(x)}
+\end{equation}
+Per sviluppare il numeratore `e necessario prima di tutto dimostrare un passaggio
+intermedio Si consideri la tautologia
+\begin{equation}
+p(x,\theta,z)=p(z,\theta,z)
+\end{equation}
+dove ciascun membro `e la ddp congiunta delle tre variabili in esame. utilizzando la
+definizione di ddp condizionata
+\begin{equation}
+p(\theta|z, x)p(z, x) = p(z, x|\theta)p(\theta)
+\end{equation}
+utilizzando l’indipendenza della nuova misura rispetto alle precedenti
+\begin{equation}
+p(\theta|z, x)p(z, x) = p(z|\theta)p(x|\theta)p(\theta)
+\end{equation}
+da cui
+\begin{equation}
+p(z,x)=\frac{p(z|\theta)p(x|\theta)p(\theta)
+}{p(\theta|z,x)}
+\end{equation}
+utilizzando Bayes
+\begin{equation}
+p(z|x)=\frac{p(z|\theta)\frac{p(\theta|x)p(x)}{p(\theta)}}{p(\theta|z,x)p(x)}
+\end{equation}
+Da cui la tesi
+\begin{equation}
+p(z|x)=\frac{p(z|\theta)p(\theta|x)}{p(\theta|z,x)}
+\end{equation}
+ponendo
+\begin{equation}
+z:=(z,\pk)
+\end{equation}
+\begin{equation}
+x:=(y,\la,\va)
+\end{equation}
+\begin{equation}
+\theta:=(\ak)
+\end{equation}
+si ha
+\begin{equation}
+p(k,\pk|y,\la,\va)=\frac{p(k,\pk|\ak)p(\ak|y,\la,\va)}{p(\ak|k,\pk,y\la,\va)}
+\end{equation}
+usando la definizione di probabilit`a condizionata si nota come il prodotto al numer-
+atore non sia altro che la probabilit`a congiunta delle variabili k, $\pk$ e $\ak$ , ottenendo
+quindi
+\begin{equation}
+p(k,\pk|y,\la,\va)=\frac{p(k,\pk,\ak|y,\la,\va)}{p(\ak|y,k',\pknew,\va)}
+\end{equation}
+Da cui la semplificazione per l'acceptance ratio
+\begin{equation}
+
+\end{equation}

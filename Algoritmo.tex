@@ -189,3 +189,215 @@ rect(z)=\begin{cases}
 \end{equation}
 
 \section{Mossa di nascita}
+\hrule 
+\textbf{Algorithm 3} Mossa di nacita
+\hrule
+
+\begin{algorithmic}
+\State All'iterazione $i$ estrai casualmente un termine di processo $p^{(i)}$ quelli non ancora selezionati
+\State Calcola la quantità $r_a$
+\State Calcola il rapporto di accettazione della mossa di nascita $\gamma_{\textit{birth}}^{(k)}$
+\State Estrai $z_b\in\unif$
+\If{$z_b\geq\gamma_{\textit{birth}}^{(k)}$}
+\State k:=k+1
+\State $ \mathcal{P}_k^{(i)}= \mathcal{P}_k^{(i-1)}\cup \{p^{(i)}\} $
+\State aggiornare i parametri con il valor medio della proposal $\ak:=\mu_{a,k'}$
+\Else
+\State Aggiorna i parametri usando (l'algoritmo 3)
+\State Aggiorna la varianza $\va$
+\EndIf
+\end{algorithmic}
+\hrule
+\vspace{2em}
+
+
+Il termine da aggiungere nello sviluppo viene scelto casualmente (con probabilit`a
+uniforme) tra i termini disponibili ovvero non gi`a presenti nell’attuale modello
+Una volta scelto il termine candidato `e necessario decidere se accettare o meno la
+mossa di nascita alla maniera di RJMCMC, in modo da far convergere la catena
+all’equilibrio rappresentato dalla posterior dei modelli.\\
+\vspace{2em}
+In particolare si accetta la mossa di nascita con probabilit`a
+\begin{equation}
+\gamma_{\textit{birth}}^{(k)}=min\{1,r_a\}
+\end{equation}
+a tal fine viene estratto un numero da una distribuzione $z_b\in\unif$,si accetta la
+mossa se $z_b\geq \gamma_{\textit{birth}}^{(k)}$ birth e si rifiuta se $z_b> \gamma_{\textit{birth}}^{(k)}$ .
+Il rapporto di accettazione $r_a$ viene calcolato come
+\begin{equation}
+r_a=\frac{\ph(x')g'(u')}{\ph(x)g(u)}\left\vert\frac{\partial(\theta_{k'},u')}{\partial(\theta_{k},u)}\right\vert
+\end{equation}
+si ha che $\ph$(x ) `e la distribuzione target della catena (la posterior) calcolata nel
+nuovo stato . Visto che il modello di rumore e gli iperparametri si tengono fissi
+durante la transizione si ha che
+\begin{equation}
+\ph(x')=p(k',\pknew,\aknew|\y,\la,\va)
+\end{equation}
+
+si noti che le variabili $k,\pk$, identificano complessivamente una particolare struttura
+del modello che `e fissata dalla tipologia di mossa, non si ha quindi da effettuare parti-
+colari richieste per essi mentre bisogna imporre la condizione di \textit{ dimension matching}
+sui vettori dei parametri e delle variabili ausiliarie chiedendo che la trasformazione\\
+\begin{equation}
+(\ak,u)\rightarrow(\aknew,u')
+\end{equation}
+sia un diffeomorfismo, si scelgono quindi le variabili ausiliarie in modo che valga.
+\begin{equation}
+dim(\ak)+dim(u)=dim(\aknew)+dim(u')
+\end{equation}
+Una possibile scelta `e $u = \ak$ e $u' =\aknew$. Il jacobiano del cambio di variabili `e
+\begin{equation}
+\left\vert\frac{\partial(\ak,\aknew)}{\partial(\aknew,\ak)}\right\vert=
+\left\vert\frac{\partial\begin{bmatrix}
+0 & I_k \\ 
+I_{k'} & 0
+\end{bmatrix}
+ \begin{bmatrix}
+\aknew \\ 
+\ak
+\end{bmatrix} }{\partial(\aknew,\ak)}\right\vert
+=\begin{vmatrix}
+0 & I_k \\ 
+I_{k'} & 0
+\end{vmatrix}=|-1|=1
+\end{equation}
+dunque
+\begin{equation}
+r_a=\frac{p(k',\pknew,\aknew |\y,\la,\va)p(\ak|\y,k',\pknew,\va)}{p(k,\pk,\ak |\y,\la,\va)p(\aknew|\y,k',\pknew,\va)}
+\end{equation}
+Per semplificare $r_a$ e evitare di estrarre un vettore $\ak$ dalla distribuzione si pu`o far
+uso dell’equazione del candidato di Besag (Si veda in seguito).\\
+Con l’equazione di Besag ed alcuni passaggi algebrici, l’espressione di $r_a$ si semplifica
+\begin{equation}
+r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}=\frac{\sigma_a^{-k'}\sqrt{det(\canew)}
+exp(\mez\muanew^T\invcanew\muanew)p(k'|\la)}{\sigma_a^{-k}\sqrt{det(\canew)}
+exp(\mez\mua^T\invca\mua)p(k|\la)}
+\end{equation}
+dove
+
+\begin{equation}
+\ca=\sigma_e^{-2}\pk^t\pk+\sigma_a^{-2}I_k
+\end{equation}
+\begin{equation}
+\mu_{a,k}=\sigma_e^{-2}\ca(\pk^T(\y-\eq\bq)
+\end{equation}
+Dunque se la mossa di nascita viene accettata, il termine proposto viene aggiunto
+allo sviluppo incrementando di conseguenza il conteggio del numero di termini. I
+coefficienti dello sviluppo vengono aggiornati con gli elementi del vettore valor medio
+calcolato mediante la [CITARE EQUAZIONE]
+Se invece la mossa viene rifiutata i termini dello sviluppo rimangono gli stessi mentre
+si aggiornano i coefficienti dello sviluppo e viene estratta una nuova varianza per i
+coefficienti.
+\subsection{Mossa di morte}
+\hrule 
+\textbf{Algorithm 3} Mossa di morte
+\hrule
+
+\begin{algorithmic}
+\State All'iterazione $i$ estrai casualmente un termine di processo $p^{(i)}$ da quelli attualmente  selezionati
+\State Calcola la quantità $r_a$
+\State Calcola il rapporto di accettazione della mossa di morte $\gamma_{\textit{death}}^{(k)}$
+\State Estrai $z_d\in\unif$
+\If{$z_d\geq\gamma_{\textit{death}}^{(k)}$}
+\State k:=k-1
+\State $ \mathcal{P}_k^{(i)}= \mathcal{P}_k^{(i-1)}- \{p^{(i)}\} $
+\State aggiornare i parametri con il valor medio della proposal $\ak:=\mu_{a,k'}$
+\Else
+\State Aggiorna i parametri usando (l'algoritmo 3)
+\State Aggiorna la varianza $\va$
+\EndIf
+\end{algorithmic}
+\hrule
+\vspace{2em}
+Il termine da eliminare dallo sviluppo viene scelto casualmente (con probabilit`a
+uniforme) tra i termini gi`a presenti nell’attuale modello
+Una volta scelto il termine candidato `e necessario decidere se accettare o meno la
+mossa di morte alla maniera di RJMCMC, in modo da far convergere la catena
+all’equilibrio rappresentato dalla posterior dei modelli
+In particolare si accetta la mossa di morte con probabilit`a
+\begin{equation}
+\gamma_{\textit{birth}}^{(k)}=min\left\lbrace 1,\frac{r_a}{r_a}\right\rbrace
+\end{equation}
+Con r a ottenuto mediante l’equazione [CITARE EQUAZIONE]
+Per imporre la probabilit`a di accettazione viene estratto un numero da una distribuzione
+ $z_d\in\unif$,si accetta la
+mossa se $z_d\geq \gamma_{\textit{death}}^{(k)}$ birth e si rifiuta se $z_b> \gamma_{\textit{death}}^{(k)}$ .
+Dunque se la mossa di morte viene accettata, il termine proposto viene eliminato
+dallo sviluppo e reinserito tra i termini disponibili per le future mosse di nascita,viene
+decrementato di conseguenza il conteggio del numero di termini. I coefficienti dello
+sviluppo vengono aggiornati con gli elementi del vettore valor medio calcolato me-
+diante la [CITA].
+Se invece la mossa viene rifiutata i termini dello sviluppo rimangono gli stessi mentre
+si aggiornano i coefficienti dello sviluppo e viene estratta una nuova varianza per i
+coefficienti.
+\subsection{Aggiornamento dei parametri}
+\hrule 
+\textbf{Algorithm 5} Aggiornamento dei parametri
+\hrule
+
+\begin{algorithmic}
+\For{m=1:k}
+\State Estrarre un candidato $\hat{a_m}^{(i)}\sim\mathcal{N}(a_m^{(i-1)},C_{m,m})$ per $a_m^{(i)}$ 
+\State Porre $a_{-m}^{(i)}=a_{-m}^{(i-1)}$
+\State Calcolare la probabilità di accettazione
+\[
+\alpha(\hat{a_m}^{(i)}|a_m^{(i-1)})=\min\left\lbrace 1, \frac{p(\hat{a_m}^{(i)}|a_{-m}^{(i-1)},\y) q(a_{-m}^{(i-1)}|a^{(i)})}{p(a_m^{(i-1)}|a_{-m}^{(i-1)},\y)q(\hat{a_m}^{(i)}|a^{(i-1)}} \right\rbrace
+\]
+\State $z\sim\unif$
+\If {$z\geq \alpha(\hat{a_m}^{(i)}|a_m^{(i-1)})$}
+\State $a_m^{(i)}=\hat{a}_m^{(i-1)}$
+\Else $a_m^{(i)}=a_m^{(i-1)}$
+\EndIf
+\EndFor
+\end{algorithmic}
+L’aggiornamento dei parametri viene fatto campionando la ddp a posteriori dei
+parametri stessi
+\begin{equation}
+p(\ak|\y,k,\pk,\eq,\va)
+\end{equation}
+che usando Bayes pu`o essere espressa come
+
+\begin{equation}
+p(\ak|\y,k,\pk,eq,\va)\propto p(\y|\pk,\eq,\ak,\bq,\ve)p(\ak|k,\va)\propto exp\left\lbrace- \frac{\epsilon^T\epsilon}{2\ve}p(\ak|k,\va)\right\rbrace
+\end{equation}
+con
+\begin{equation}
+\epsilon=\y-\pk\ak-\eq\bq
+\end{equation}
+e
+\begin{equation}
+p(\ak|k,\va)=\normal{\textbf{0}}{\va \mathbb{I}}
+\end{equation}
+I parametri sono aggiornati sequenzialmente usando un algoritmo di tipo MH che,
+invece di campionare la posterior multivriata la approssima campionando la proba-
+bilit`a dei singoli coefficienti condizionate rispetto agli altri. Dato per`o che anche le
+singole probabilit`a condizionate non sono semplici da campionare, si ricorre ad una
+densit`a di proposal scelta come gaussiana di varianza $C_{m,m}$ (l’ m-esimo elemento
+della diagonale della matrice $C_{a,k}$ ) e valor medio il vecchio coefficiente $a_m^{(i-1)}$ . Il
+coefficiente proposto viene accettato (sostituito al posto del corrispondente vecchio
+coefficiente) con una probabilit`a che `e calcolata alla maniera di MH.
+\begin{equation}
+\alpha(\hat{a}_m^{(i)}|a_m^{(i-1)})=min\left\lbrace 1,\frac{p(\hat{a}_m^{(i)}|a_{-m}^{(i-1)},\y)q(a_{-m}^{(i-1)}|a^{(i)})}
+{p(a_{-m}^{(i-1)}|a_{-m}^{(i-1)},\y)q(\hat{a}_m^{(i)}|a^{(i)}})\right\rbrace
+\end{equation}
+Nella espressione sopra si `e omesso il simbolo k che indica la struttura di modello a
+cui si riferisce il vettore di coefficienti. Se non c’`e il pedice si indica tutto il vettore
+dei coefficienti. Il simbolo di accento circonflesso indica l’elemento estratto dalla
+proposal. Il pedice m indica che si sta parlando dell’m-esimo elemento del vettore,
+il pedice -m indica il vettore di tutti i coefficienti escluso l’m-esimo. L’apice indica
+l’iterazione di RJMCMC in cui `e stato calcolato il termine: quelli che hanno apice
+(i-1) sono i vecchi coefficienti mentre quelli con apice (i) sono quelli calcolati
+nell’attuale iterazione. Con probabilit`a $1-\alpha(\hat{a}_m^{(i)}|a_m^{(i-1)}$ il coefficiente proposto
+viene rifiutato e rimane pari al vecchio valore.
+\begin{equation}
+r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}
+\end{equation}.
+Dovrò quindi calcolare
+\begin{equation}
+p(k,\pk|\y,\la,\va)
+\end{equation}
+che può essere ottenuta come probabilità marginale
+\begin{equation}
+p(k,\pk|\y,\la,\va)=\int p(k,\pk,\ak|y\la,\va)d\ak
+\end{equation}
+Usando Bayes l'integranda diventa
