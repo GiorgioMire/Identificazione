@@ -389,15 +389,3 @@ l’iterazione di RJMCMC in cui `e stato calcolato il termine: quelli che hanno 
 (i-1) sono i vecchi coefficienti mentre quelli con apice (i) sono quelli calcolati
 nell’attuale iterazione. Con probabilit`a $1-\alpha(\hat{a}_m^{(i)}|a_m^{(i-1)}$ il coefficiente proposto
 viene rifiutato e rimane pari al vecchio valore.
-\begin{equation}
-r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}
-\end{equation}.
-Dovrò quindi calcolare
-\begin{equation}
-p(k,\pk|\y,\la,\va)
-\end{equation}
-che può essere ottenuta come probabilità marginale
-\begin{equation}
-p(k,\pk|\y,\la,\va)=\int p(k,\pk,\ak|y\la,\va)d\ak
-\end{equation}
-Usando Bayes l'integranda diventa

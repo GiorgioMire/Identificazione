@@ -70,5 +70,14 @@ p(k,\pk|y,\la,\va)=\frac{p(k,\pk,\ak|y,\la,\va)}{p(\ak|y,k',\pknew,\va)}
 \end{equation}
 Da cui la semplificazione per l'acceptance ratio
 \begin{equation}
-
+r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}
+\end{equation}.
+Dovrò quindi calcolare
+\begin{equation}
+p(k,\pk|\y,\la,\va)
 \end{equation}
+che può essere ottenuta come probabilità marginale
+\begin{equation}
+p(k,\pk|\y,\la,\va)=\int p(k,\pk,\ak|y\la,\va)d\ak
+\end{equation}
+Usando Bayes l'integranda diventa
