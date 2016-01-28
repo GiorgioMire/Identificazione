@@ -1,6 +1,6 @@
 %__ draw Avai
 New_pos=randi(length(Process_avaiable));
-New_T=Process_all(Process_avaiable(New_pos));
+New_T=Process_all{Process_avaiable(New_pos)};
 New_k=k+1;
 
 compute_Pk_New;

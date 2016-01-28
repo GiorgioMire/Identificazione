@@ -5,7 +5,7 @@ SA=sigmaA;
 invC=SE^(-2)*(Pk.')*Pk+SA^(-2)*eye(k);%;
 C=inv(invC);
 for m=1:k
-      ahat(m)=normrnd(ak(m),(1+1000/it)*C(m,m));
+      ahat(m)=normrnd(ak(m),(1+2000/it)*C(m,m));
     
     %PosteriorNew
     a=ak;
@@ -21,7 +21,7 @@ posterior=mvnpdf(ak,zeros(k,1),sigmaA^2*eye(k));
 %La proposal secondo me non va compensata a causa della simmetria
 %della gaussiana attorno al valor medio
 
-rate=(posteriorNew/posterior)^100;
+rate=(posteriorNew/posterior);
 
 if (~isfinite(posterior) && ~isfinite(posteriorNew)) || isnan(rate)
     warning('not finite posterior or nan rate')

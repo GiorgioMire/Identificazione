@@ -1,4 +1,4 @@
-% ework(dynamicOrder+1:end)=residual;
+ %ework(dynamicOrder+1:end)=residual;
 % ecut=residual;
 E=[];
 t=dynamicOrder+1:dynamicOrder+windowSize;

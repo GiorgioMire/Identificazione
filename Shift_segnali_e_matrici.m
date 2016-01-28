@@ -1,6 +1,8 @@
-base=dynamicOrder+it;
-cutInterval=base:base+windowSize-1;
-workInterval=it:base+windowSize-1;
+t_base=dynamicOrder+it;
+t_end=t_base+windowSize-1;
+cutInterval=t_base:t_end;
+workInterval=it:t_end;
+
 ycut=y(cutInterval);
 ucut=u(cutInterval);
 ework=e(workInterval);
@@ -18,13 +20,11 @@ aggiunta=[];
 %   t=length(workInterval);
 for i=1:length(Process_choosen)
     pos=Process_choosen(i);
-    T=Process_all(pos);
+    T=Process_all{pos};
   
-    aggiunta(1,i)=uwork(end-T.udelay)^T.upow*ywork(end-T.ydelay)^T.ypow;
-
+    aggiunta(1,i)=T(t_end,u,y);
 end
 Pk=[Pk;aggiunta];
-
 %_______________________________________
 % Shift della matrice Eq
 if ~isempty(Eq)
@@ -34,8 +34,8 @@ aggiunta=[];
   
 for i=1:length(Noise_choosen)
     pos=Noise_choosen(i);
-    T=Noise_all(pos);
-    aggiunta(1,i)=uwork(end-T.udelay)^T.upow*ywork(end-T.ydelay)^T.ypow*ework(end-T.edelay)^T.epow;
+    T=Noise_all{pos};
+    aggiunta(1,i)=T(t_end,u,y,e);
 end
 Eq=[Eq;aggiunta];
 

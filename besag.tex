@@ -81,3 +81,43 @@ che può essere ottenuta come probabilità marginale
 p(k,\pk|\y,\la,\va)=\int p(k,\pk,\ak|y\la,\va)d\ak
 \end{equation}
 Usando Bayes l'integranda diventa
+\begin{align*}
+& \frac{1}{p(\y)}p(\y|k,\pk,\ak,\la,\va,q,\eq,\lb,\bq,\ve)p(k,\pk,\ak|\la,\va)\\
+=&\frac{1}{p(\y)}p(k|\la)p(\pk)p(\y|k,\pk,\ak,\la,q,\eq,\lb,\bq,\ve)p(ak|k,\va)\\
+=&\frac{1}{p(\y)}p(k|\la)p(\pk)\normal{\pk\ak+2\y^T\eq\bq}{\ve I_k}\normal{0}{\va I_k}\\
+=& \mathcal{K}\cdot exp[ \mez \sigma_e^{-2}(2\y^T\pk\ak+2\y^T\eq\bq-\bq^T\eq^T\eq\bq-2\ak^T\pk^T\eq\bq-\y^T\y)-\\
+&\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2}I_k)\ak ]
+\end{align*}
+con
+\begin{equation}
+\mathcal{K}=\frac{1}{p(y)}\frac{\sigma_e^{-N}}{\sqrt{2\pi}^N}\frac{\sigma_a^{-k}}{\sqrt{2\pi}^k}p(k|\la)p(\pk)
+\end{equation}
+Si moltiplichi e si divida per $\mathcal{N}({\ak |\mu,C})$
+\begin{align*}
+&\mathcal{K}\sqrt{(2\pi)^k det(C)} exp[ \mez \sigma_e^{-2}(2\y^T\pk\ak+2\y^T\eq\bq-\bq^T\eq^T\eq\bq-2\ak^T\pk^T\eq\bq-\y^T\y)-\\
+&\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2}I_k)\ak +\mez(\ak-\mu)^TC^{-1}(\ak-\mu) ]\mathcal{N}(\ak|\mu,C)
+\end{align*}
+con semplici manipolazioni algebriche si ottiene
+\begin{align*}
+\mathcal{K}\sqrt{(2\pi)^k det(C)}
+exp[\mez\sigma_e^{-2}(2\y^T\eq\bq-\bq^T\eq^T\eq\bq-\y^T\y)-\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2} I_k-C^{-1})\ak+\ak^T(\sigma_e^{-2}\pk^T\y-\sigma_e^{-2}\pk^T\eq\bq-C^{-1}\mu)+\mez(\mu^TC^{-1}\mu)]\mathcal{N}(\ak |\mu, C)
+\end{align*}
+annullando l’espressione tra parentesi che costituisce la matrice della forma quadratica in a $\ak$ e l’espressione tra parentesi che costituisce la matrice che moltiplica a $\ak^T$ ,si ricava l’espressione per la media e la covarianza
+\begin{equation}
+C=\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2} I_k
+\end{equation}
+\begin{equation}
+\mu=\sigma_e^{-2} C\pk^T(\y-\eq\bq)
+\end{equation}
+grazie al quale l’integranda si semplifica in modo tale che tutta la dipendenza da $\ak$ sia attribuita alla gaussiana di parametri $\mu$ e $C$.\\
+Calcolando l’integrale si ottiene
+\begin{align*}
+p(k,\pk | \y,\la,\va)&=\sqrt{(2\pi)^k det(C)}\mathcal{K}p(k |\la)p(\pk) exp[\mez\sigma_e^{-2}(2\y^T\eq\bq-\bq^T\eq^T\eq\bq-\y^T\y)+\\&\mez(\mu^T C^{-1}\mu)\int \mathcal{N}(\ak|\mu,C)d\ak\\
+&=p(k|\la)p(\pk)\sqrt{(2\pi)^k det(C)}\mathcal{K}\cdot exp[\mez \sigma_e^{-2}(2\y^T\eq\bq-\\ &\bq^T\eq^T\eq\bq-\y^T\y)+\mez(\mu^T C^{-1}\mu)]
+\end{align*}
+da cui
+\begin{equation}
+r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}=\frac{\sigma_a^{-k'}\sqrt{det(\canew)}
+exp(\mez\muanew^T\invcanew\muanew)p(k'|\la)}{\sigma_a^{-k}\sqrt{det(\canew)}
+exp(\mez\mua^T\invca\mua)p(k|\la)}
+\end{equation}
