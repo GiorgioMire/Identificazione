@@ -1,2 +1,3 @@
-pd=makedist('Gamma','a',alphaLB+q+1,'b',betaLB);
+theta=1/betaLB;
+pd=makedist('Gamma','a',alphaLB+q,'b',theta);
 lambdaB=random(pd);

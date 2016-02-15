@@ -5,8 +5,9 @@ SA=sigmaA;
 invC=SE^(-2)*(Pk.')*Pk+SA^(-2)*eye(k);%;
 C=inv(invC);
 for m=1:k
-      ahat(m)=normrnd(ak(m),(1+2000/it)*C(m,m));
-    
+      ahat(m)=normrnd(ak(m),proposal_factor*C(m,m));
+      %display('diff')
+     %ahat(m)-ak(m)
     %PosteriorNew
     a=ak;
     a(m)=ahat(m);
@@ -25,11 +26,11 @@ rate=(posteriorNew/posterior);
 
 if (~isfinite(posterior) && ~isfinite(posteriorNew)) || isnan(rate)
     warning('not finite posterior or nan rate')
-    rate=0;
+    rate=1;
 end
 alpha=min(1,rate);
 z=rand();
-if z<alpha
+if z<alpha && abs(ahat(m))>0.1
     ak(m)=ahat(m);
 else
 

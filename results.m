@@ -1,15 +1,20 @@
 
 bestak=[];
 bestbq=[];
+
 Ebest=[];
 Pbest=[];
-bestmodel=mode(modelserie);
-[ bestprocess,bestnoise] = ord2Model( bestmodel,Process_all,Noise_all);
+bestmodelP=mode(modelserie_process);
+bestmodelN=mode(modelserie_noise);
+[ bestprocess] = ord2Model_separate( bestmodelP,Process_all);
+[ bestnoise] = ord2Model_separate( bestmodelN,Noise_all);
+
 for j=1:length(bestprocess)
     T=Process_all{bestprocess(j)};
-    bestak_ts=Ak{ord2Lower(bestmodel)};
-    bestak(j,1)=maxhist(bestak_ts(j,1:end));
-    
+    bestak_ts=Ak{ord2LowerProcess(bestmodelP)};
+    bestak(j,1)=maxhistplot(bestak_ts(j,1:end));
+    titolo=sprintf('ak_%i',j);
+    title(titolo);
     t=cutInterval;
     for i=1:windowSize
     Pbest(i,j)=T(t(i),u,y);
@@ -20,27 +25,28 @@ end
 
 
 
-
 for j=1:length(bestnoise)
     T=Noise_all{bestnoise(j)};
-    bestbq_ts=Bq{ord2Lower(bestmodel)};
-    bestbq(j,1)=maxhist(bestbq_ts(j,1:end));
-    t=cutInterval;
+    bestbq_ts=Bq{ord2LowerNoise(bestmodelN)};
+    bestbq(j,1)=maxhistplot(bestbq_ts(j,1:end));
+      titolo=sprintf('bq_%i',j);
+    title(titolo);
+     t=cutInterval;
        for i=1:windowSize
     Ebest(i,j)=T(t(i),u,y,e);
        end
 end
 
 besty=ezp(Pbest,bestak,ycut)+ezp(Ebest,bestbq,ycut);
-% figure(159)
-% plot(besty+ecut,'b');
-% hold on
-% plot(ycut,'r');
-% pause(0.00001)
-% hold off;
-% figure(160)
-% plot(ycut-besty-ecut)
-% pause(0.001)
+figure(159)
+plot(besty+ecut,'b');
+hold on
+plot(ycut,'r');
+pause(0.00001)
+hold off;
+figure(160)
+plot(ycut-besty-ecut)
+pause(0.001)
 
 ProcessTarget
 try
@@ -76,11 +82,11 @@ for j=1:length(ProcessTarget)
 end
 normbesteps=[normbesteps,norm(besty-ycut)];
 normecut=[normecut,norm(ecut)];
-normrealecut=[normrealecut,norm(e(cutInterval))];
-% figure(500)
-% plot(normbesteps,'b')
-% hold on
-% plot(normecut,'r')
-% hold on
-% plot(normrealecut,'g')
-% hold off
+figure(500)
+plot(normbesteps,'b')
+hold on
+plot(normecut,'r')
+hold off
+
+
+sum(ecut-e(cutInterval))

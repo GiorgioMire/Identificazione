@@ -1,5 +1,6 @@
 function [ p] = B(c,lambda,n,nmax )
-if n<=1 && nmax~=1
+
+if n==0 && nmax~=0
     p=1;
 elseif n==nmax
     p=0;

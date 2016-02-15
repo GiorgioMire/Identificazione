@@ -43,38 +43,29 @@ NARMAX}
 \end{algorithmic}
 
 L’algoritmo parte con l’inizializzazione di parametri e iperparametri: solitamente si
-parte con un modello vuoto ovvero con nessun termine (di rumore e di processo),
+inizia con un modello vuoto ovvero con nessun termine (di rumore e di processo),
 le matrici di regressione sono in tal caso (per convenzione) una singola colonna
-di elementi nulli e il vettore dei parametri `e lo scalare nullo. Gli iperparametri
-delle poisson troncate vengono inizializzati a quello che ci si aspetta essere il nu-
-mero medio di termini nello sviluppo, mentre le varianze dei coefficienti vengono
+di elementi nulli e il vettore dei parametri è lo scalare nullo. Gli iperparametri
+delle poisson troncate vengono inizializzati a quello che ci si aspetta essere il numero medio di termini nello sviluppo, mentre le varianze dei coefficienti vengono
 inizializzate ad un valore non piccolo in modo da avere inizialmente dei prior molto
-dispersi e quindi poco informativi. L’inizializzazione di questi parametri non `e crit-
-ica perch`e essi verranno aggiornati con l’evoluzione della catena e si adatteranno al
-valore pi`
-u appropriato. La varianza $\ve$ del rumore bianco invece viene inizializzata
-e non viene pi`
-u aggiornata, tale parametro rappresenta infatti un parametro di tun-
-ing dell’algoritmo essendo in qualche modo una metrica di affidabilit`a delle misure,
-`e sensato dunque che esso influisca direttamente sulla probabilit`a di accettazione
+dispersi e quindi poco informativi. L’inizializzazione di questi parametri non è critica perchè essi verranno aggiornati con l’evoluzione della catena e si adatteranno al
+valore più appropriato. La varianza $\ve$ del rumore bianco invece viene inizializzata
+e non viene più aggiornata, tale parametro rappresenta infatti un parametro di tuning dell’algoritmo essendo in qualche modo una metrica di affidabilità delle misure,
+è sensato dunque che esso influisca direttamente sulla probabilità di accettazione
 delle mosse: abbassare tale parametro equivale a ritenere l’incertezza bassa quindi
-il rapporto di accettazione sar`a pi`
-u selettivo e le mosse proposte verranno scartate
-pi`
-u frequentemente.
+il rapporto di accettazione sarà più selettivo e le mosse proposte verranno scartate
+più frequentemente.
 L’algoritmo prevede un numero fissato a priori di iterazioni. In corrispondenza di
-ciascuna iterazione la catena di markov andr`a a risiedere in uno stato che rappre-
-senta un modello del sistema. L’assunzione di \textbf{ergodicità} permette di ricostruire la probabilit`a che la catena risieda in un particolare stato a partire dal
-numero di iterazioni medio in cui la catena risiede in quello stato. E’ necessario per`o
+ciascuna iterazione la catena di Markov andrà a risiedere in uno stato che rappresenta un modello del sistema. L’assunzione di \textbf{ergodicità} permette di ricostruire la probabilità che la catena risieda in un particolare stato a partire dal
+numero di iterazioni medio in cui la catena risiede in quello stato. E’ necessario però
 adottare due accorgimenti:
 \begin{itemize}
 \item il numero di iterazioni deve essere abbastanza elevato da fare in modo che valga
-con buona approssimazione l’ipotesi di ergodicit`a. Se le statistiche si raccol-
-gono su poche iterazioni le probabilit`a che si ottengono sono molto influenzate
+con buona approssimazione l’ipotesi di ergodicità. Se le statistiche si raccolgono su poche iterazioni le probabilità che si ottengono sono molto influenzate
 dalla particolare realizzazione della catena.
 \item il numero medio di iterazioni in corrispondenza del quale la catena risiede in
 un particolare stato deve essere calcolato escludendo le prime iterazioni della
-catena (il cosiddetto periodo di burn-in ossia di riscaldamento), questo perch`e
+catena (il cosiddetto periodo di burnin), questo perchè
 le prime iterazioni sono fortemente influenzate dalla particolare inizializzazione
 dei parametri e dello stato.
 \end{itemize}
@@ -86,8 +77,7 @@ per il numero medio di termini.
 Dopo che hanno eseguito questi algritmi si calcola il nuovo errore di regressione come
 differenza tra le uscite misurate del sistema e le uscite predette dal modello.
 Assumendo poi che il modello attuale sia capace di descrivere esattamente l’uscita
-misurata, si considera l’errore di regressione come se fosse l’attuale campione di ru-
-more gaussiano bianco e si aggiorna la matrice di regressione del rumore.
+misurata, si considera l’errore di regressione come se fosse la realizzazione del rumore gaussiano bianco e si aggiorna la matrice di regressione del rumore.
 Per ottenere l’output dell’identificazione basta tenere in memoria (a partire da
 quando si ritiene esaurito il transitorio iniziale) i modelli visitati dalla catena e
 costruire progressivamente gli istogrammi sul numero di termini, sull’identificativo
@@ -111,7 +101,7 @@ una successiva mossa di nascita. Il numero di termini del modello passa da $k$
 a $k' = k-1$\\
 I coefficienti dello sviluppo vengono estratti nuovamente
 \item Aggiornamento:\\
-Non si ha cambio di dimensionalit`a $k'=k$
+Non si ha cambio di dimensionalità $k'=k$
 Vengono solamente cambiati i coefficienti dello sviluppo e la varianza della
 distribuzione da cui sono estratti.
 \end{itemize}
@@ -122,40 +112,39 @@ La mossa di nascita viene estratta con probabilità $B_k$ dove
 B_k=\begin{cases}
 1 & k=0\\
 0 & k=M_p\\
-c\cdot\min\left\lbrace 1,\frac{p(k+1|\la}{p(k|\la)}\right\rbrace & text{altrimenti}
+c\cdot\min\left\lbrace 1,\frac{p(k+1|\la}{p(k|\la)}\right\rbrace & \text{altrimenti}
 \end{cases}
 \end{equation}
 La mossa di morte viene estratta con probabilità
 \begin{equation}
 D_k=\begin{cases}
 0 & k=0\\
-c\cdot\min\left\lbrace 1,\frac{p(k-1|\la}{p(k|\la)}\right\rbrace & text{altrimenti}
+c\cdot\min\left\lbrace 1,\frac{p(k-1|\la}{p(k|\la)}\right\rbrace & \text{altrimenti}
 \end{cases}
 \end{equation}
-La mossa di aggiornamento viene estratta con probabilit`a
+La mossa di aggiornamento viene estratta con probabilità
 \begin{equation}
 U_k=1-B_k-D_k
 \end{equation}
 La costante c serve per regolare la frequenza relativa tra mosse che cambiano la
-dimensionalit`a (morte e nascita) e la mossa di aggiornamento.\\
-La scelta delle probabilit`a di nascita e di morte garantisce che
+dimensionalità (morte e nascita) e la mossa di aggiornamento.\\
+La scelta delle probabilità di nascita e di morte garantisce che
 \begin{equation}
 B_k p(k|\lambda)=D_{k+1}  p(k+1|\lambda) \label{equilibr_dimensi}
 \end{equation}
 
-La (\ref{equilibr_dimensi}) `e una equazione di equilibrio bilanciato per il solo numero di termini.
+La (\ref{equilibr_dimensi}) è una equazione di equilibrio bilanciato per il solo numero di termini.
 Questo vuol dire che se si avesse solo l’informazione del numero di termini (nessuna
 informazione sui coefficienti o sul tipo di termini,quindi nessuna idea sull’errore di
-regressione) la probabilit`a del numero di termini convergerebbe alla distribuzione a
-priori. In realt`a nelle prossime sezioni si aggiunger`a un meccanismo di accettazione
-o rifiuto delle mosse che va di fatto ad alterare la probabilit`a di regime del numero
+regressione) la probabilità del numero di termini convergerebbe alla distribuzione a
+priori. In realtà nelle prossime sezioni si aggiungerà un meccanismo di accettazione
+o rifiuto delle mosse che va di fatto ad alterare la probabilità di regime del numero
 di termini in modo da tenere conto anche dell’errore di regressione (informazione
-delle misure) pi`
-uttosto che delle sole informazioni a priori.
+delle misure) piuttosto che delle sole informazioni a priori.
 \subsection{Estrazione di una tipologia di mossa}
-L’estrazione della tipologia di mosse deve avvenire con le probabilit`a B k , U k , D k
+L’estrazione della tipologia di mosse deve avvenire con le probabilità $B_k$ , $U_k$ , $D_k$
 calcolate come descritto nella sezione precedente. Un modo semplice per imporre
-tale probabilit`a `e la seguente:\\
+tale probabilità è la seguente:\\
 
 \begin{algorithmic}
 \State Estrai $z_k\in\unif$
@@ -167,8 +156,8 @@ tale probabilit`a `e la seguente:\\
 \State Effettuare la mossa di aggiornamento
 \EndIf
 \end{algorithmic}
-per mostrare che si ottengono effettivamente le probabilit`a cercate basta integrare
-tra gli estremi opportuni la ddp della variabile uniforme che `e un l’impulso
+per mostrare che si ottengono effettivamente le probabilità cercate basta integrare
+tra gli estremi opportuni la ddp della variabile uniforme che è un l’impulso
 rettangolare
 \begin{equation}
 P\left(0<z_k\leq B_k^{(i)}\right)=\int_0^{B_k^{(i)}}rect(z-0.5)dz=\int_0^{B_k^{(i)}}dz={B_k^{(i)}}
@@ -211,13 +200,13 @@ rect(z)=\begin{cases}
 \vspace{2em}
 
 
-Il termine da aggiungere nello sviluppo viene scelto casualmente (con probabilit`a
-uniforme) tra i termini disponibili ovvero non gi`a presenti nell’attuale modello
-Una volta scelto il termine candidato `e necessario decidere se accettare o meno la
+Il termine da aggiungere nello sviluppo viene scelto casualmente (con probabilità
+uniforme) tra i termini disponibili ovvero non già presenti nell’attuale modello.
+Una volta scelto il termine candidato è necessario decidere se accettare o meno la
 mossa di nascita alla maniera di RJMCMC, in modo da far convergere la catena
 all’equilibrio rappresentato dalla posterior dei modelli.\\
 \vspace{2em}
-In particolare si accetta la mossa di nascita con probabilit`a
+In particolare si accetta la mossa di nascita con probabilità
 \begin{equation}
 \gamma_{\textit{birth}}^{(k)}=min\{1,r_a\}
 \end{equation}
@@ -227,7 +216,7 @@ Il rapporto di accettazione $r_a$ viene calcolato come
 \begin{equation}
 r_a=\frac{\ph(x')g'(u')}{\ph(x)g(u)}\left\vert\frac{\partial(\theta_{k'},u')}{\partial(\theta_{k},u)}\right\vert
 \end{equation}
-si ha che $\ph$(x ) `e la distribuzione target della catena (la posterior) calcolata nel
+si ha che $\ph$(x ) è la distribuzione target della catena (la posterior) calcolata nel
 nuovo stato . Visto che il modello di rumore e gli iperparametri si tengono fissi
 durante la transizione si ha che
 \begin{equation}
@@ -235,8 +224,7 @@ durante la transizione si ha che
 \end{equation}
 
 si noti che le variabili $k,\pk$, identificano complessivamente una particolare struttura
-del modello che `e fissata dalla tipologia di mossa, non si ha quindi da effettuare parti-
-colari richieste per essi mentre bisogna imporre la condizione di \textit{ dimension matching}
+del modello che è fissata dalla tipologia di mossa, non si ha quindi da effettuare particolari richieste per essi mentre bisogna imporre la condizione di \textit{ dimension matching}
 sui vettori dei parametri e delle variabili ausiliarie chiedendo che la trasformazione\\
 \begin{equation}
 (\ak,u)\rightarrow(\aknew,u')
@@ -245,7 +233,7 @@ sia un diffeomorfismo, si scelgono quindi le variabili ausiliarie in modo che va
 \begin{equation}
 dim(\ak)+dim(u)=dim(\aknew)+dim(u')
 \end{equation}
-Una possibile scelta `e $u = \ak$ e $u' =\aknew$. Il jacobiano del cambio di variabili `e
+Una possibile scelta è $u = \ak$ e $u' =\aknew$. Il jacobiano del cambio di variabili è
 \begin{equation}
 \left\vert\frac{\partial(\ak,\aknew)}{\partial(\aknew,\ak)}\right\vert=
 \left\vert\frac{\partial\begin{bmatrix}
@@ -265,26 +253,26 @@ dunque
 \begin{equation}
 r_a=\frac{p(k',\pknew,\aknew |\y,\la,\va)p(\ak|\y,k',\pknew,\va)}{p(k,\pk,\ak |\y,\la,\va)p(\aknew|\y,k',\pknew,\va)}
 \end{equation}
-Per semplificare $r_a$ e evitare di estrarre un vettore $\ak$ dalla distribuzione si pu`o far
+Per semplificare $r_a$ e evitare di estrarre un vettore $\ak$ dalla distribuzione si può far
 uso dell’equazione del candidato di Besag (Si veda in seguito).\\
 Con l’equazione di Besag ed alcuni passaggi algebrici, l’espressione di $r_a$ si semplifica
 \begin{equation}
 r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}=\frac{\sigma_a^{-k'}\sqrt{det(\canew)}
 exp(\mez\muanew^T\invcanew\muanew)p(k'|\la)}{\sigma_a^{-k}\sqrt{det(\canew)}
-exp(\mez\mua^T\invca\mua)p(k|\la)}
+exp(\mez\mua^T\invca\mua)p(k|\la)} \label{ra}
 \end{equation}
 dove
 
 \begin{equation}
-\ca=\sigma_e^{-2}\pk^t\pk+\sigma_a^{-2}I_k
+\ca=\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2}I_k
 \end{equation}
 \begin{equation}
-\mu_{a,k}=\sigma_e^{-2}\ca(\pk^T(\y-\eq\bq)
+\mu_{a,k}=\sigma_e^{-2}\ca(\pk^T(\y-\eq\bq) \label{mu}
 \end{equation}
 Dunque se la mossa di nascita viene accettata, il termine proposto viene aggiunto
 allo sviluppo incrementando di conseguenza il conteggio del numero di termini. I
 coefficienti dello sviluppo vengono aggiornati con gli elementi del vettore valor medio
-calcolato mediante la [CITARE EQUAZIONE]
+calcolato mediante la (\ref{mu})
 Se invece la mossa viene rifiutata i termini dello sviluppo rimangono gli stessi mentre
 si aggiornano i coefficienti dello sviluppo e viene estratta una nuova varianza per i
 coefficienti.
@@ -309,24 +297,23 @@ coefficienti.
 \end{algorithmic}
 \hrule
 \vspace{2em}
-Il termine da eliminare dallo sviluppo viene scelto casualmente (con probabilit`a
-uniforme) tra i termini gi`a presenti nell’attuale modello
-Una volta scelto il termine candidato `e necessario decidere se accettare o meno la
+Il termine da eliminare dallo sviluppo viene scelto casualmente (con probabilità
+uniforme) tra i termini già presenti nell’attuale modello
+Una volta scelto il termine candidato è necessario decidere se accettare o meno la
 mossa di morte alla maniera di RJMCMC, in modo da far convergere la catena
 all’equilibrio rappresentato dalla posterior dei modelli
-In particolare si accetta la mossa di morte con probabilit`a
+In particolare si accetta la mossa di morte con probabilità
 \begin{equation}
 \gamma_{\textit{birth}}^{(k)}=min\left\lbrace 1,\frac{r_a}{r_a}\right\rbrace
 \end{equation}
-Con r a ottenuto mediante l’equazione [CITARE EQUAZIONE]
-Per imporre la probabilit`a di accettazione viene estratto un numero da una distribuzione
+Con $r_a$ ottenuto mediante l’equazione (\ref{ra})
+Per imporre la probabilità di accettazione viene estratto un numero da una distribuzione
  $z_d\in\unif$,si accetta la
 mossa se $z_d\geq \gamma_{\textit{death}}^{(k)}$ birth e si rifiuta se $z_b> \gamma_{\textit{death}}^{(k)}$ .
 Dunque se la mossa di morte viene accettata, il termine proposto viene eliminato
 dallo sviluppo e reinserito tra i termini disponibili per le future mosse di nascita,viene
 decrementato di conseguenza il conteggio del numero di termini. I coefficienti dello
-sviluppo vengono aggiornati con gli elementi del vettore valor medio calcolato me-
-diante la [CITA].
+sviluppo vengono aggiornati con gli elementi del vettore valor medio calcolato mediante la (\ref{mu}).
 Se invece la mossa viene rifiutata i termini dello sviluppo rimangono gli stessi mentre
 si aggiornano i coefficienti dello sviluppo e viene estratta una nuova varianza per i
 coefficienti.
@@ -346,7 +333,8 @@ coefficienti.
 \State $z\sim\unif$
 \If {$z\geq \alpha(\hat{a_m}^{(i)}|a_m^{(i-1)})$}
 \State $a_m^{(i)}=\hat{a}_m^{(i-1)}$
-\Else $a_m^{(i)}=a_m^{(i-1)}$
+\Else
+\State $a_m^{(i)}=a_m^{(i-1)}$
 \EndIf
 \EndFor
 \end{algorithmic}
@@ -355,10 +343,10 @@ parametri stessi
 \begin{equation}
 p(\ak|\y,k,\pk,\eq,\va)
 \end{equation}
-che usando Bayes pu`o essere espressa come
+che usando Bayes può essere espressa come
 
 \begin{equation}
-p(\ak|\y,k,\pk,eq,\va)\propto p(\y|\pk,\eq,\ak,\bq,\ve)p(\ak|k,\va)\propto exp\left\lbrace- \frac{\epsilon^T\epsilon}{2\ve}p(\ak|k,\va)\right\rbrace
+p(\ak|\y,k,\pk,eq,\va)\propto p(\y|\pk,\eq,\ak,\bq,\ve)p(\ak|k,\va)\propto exp\left\lbrace- \frac{\epsilon^T\epsilon}{2\ve}\right\rbrace p(\ak|k,\va)
 \end{equation}
 con
 \begin{equation}
@@ -369,23 +357,22 @@ e
 p(\ak|k,\va)=\normal{\textbf{0}}{\va \mathbb{I}}
 \end{equation}
 I parametri sono aggiornati sequenzialmente usando un algoritmo di tipo MH che,
-invece di campionare la posterior multivriata la approssima campionando la proba-
-bilit`a dei singoli coefficienti condizionate rispetto agli altri. Dato per`o che anche le
-singole probabilit`a condizionate non sono semplici da campionare, si ricorre ad una
-densit`a di proposal scelta come gaussiana di varianza $C_{m,m}$ (l’ m-esimo elemento
+invece di campionare la posterior multivriata la approssima campionando la probabilità dei singoli coefficienti condizionate rispetto agli altri. Dato però che anche le
+singole probabilità condizionate non sono semplici da campionare, si ricorre ad una
+densità di proposal scelta come gaussiana di varianza $C_{m,m}$ (l’ m-esimo elemento
 della diagonale della matrice $C_{a,k}$ ) e valor medio il vecchio coefficiente $a_m^{(i-1)}$ . Il
 coefficiente proposto viene accettato (sostituito al posto del corrispondente vecchio
-coefficiente) con una probabilit`a che `e calcolata alla maniera di MH.
+coefficiente) con una probabilità che è calcolata alla maniera di MH.
 \begin{equation}
 \alpha(\hat{a}_m^{(i)}|a_m^{(i-1)})=min\left\lbrace 1,\frac{p(\hat{a}_m^{(i)}|a_{-m}^{(i-1)},\y)q(a_{-m}^{(i-1)}|a^{(i)})}
-{p(a_{-m}^{(i-1)}|a_{-m}^{(i-1)},\y)q(\hat{a}_m^{(i)}|a^{(i)}})\right\rbrace
+{p(a_{-m}^{(i-1)}|a_{-m}^{(i-1)},\y)q(\hat{a}_m^{(i)}|a^{(i)})})\right\rbrace
 \end{equation}
-Nella espressione sopra si `e omesso il simbolo k che indica la struttura di modello a
-cui si riferisce il vettore di coefficienti. Se non c’`e il pedice si indica tutto il vettore
+Nella espressione sopra si è omesso il simbolo k che indica la struttura di modello a
+cui si riferisce il vettore di coefficienti. Se non c’è il pedice si indica tutto il vettore
 dei coefficienti. Il simbolo di accento circonflesso indica l’elemento estratto dalla
 proposal. Il pedice m indica che si sta parlando dell’m-esimo elemento del vettore,
 il pedice -m indica il vettore di tutti i coefficienti escluso l’m-esimo. L’apice indica
-l’iterazione di RJMCMC in cui `e stato calcolato il termine: quelli che hanno apice
+l’iterazione di RJMCMC in cui è stato calcolato il termine: quelli che hanno apice
 (i-1) sono i vecchi coefficienti mentre quelli con apice (i) sono quelli calcolati
-nell’attuale iterazione. Con probabilit`a $1-\alpha(\hat{a}_m^{(i)}|a_m^{(i-1)}$ il coefficiente proposto
+nell’attuale iterazione. Con probabilità $1-\alpha(\hat{a}_m^{(i)})|a_m^{(i-1)}$ il coefficiente proposto
 viene rifiutato e rimane pari al vecchio valore.

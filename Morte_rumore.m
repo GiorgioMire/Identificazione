@@ -4,7 +4,7 @@ New_q=q-1;
 New_Eq=Eq;
 New_Eq(:,New_pos)=[];
 Compute_RB;
-gamma=min(1,1/rb);
+gamma=min(1,rb);
 
 z=rand();
 if z<gamma
@@ -12,11 +12,22 @@ if z<gamma
 Noise_avaiable=[Noise_avaiable,Noise_choosen(New_pos)];  
 Noise_choosen(New_pos)=[];
 q=q-1;
+
 bq=New_bq;
 Eq=New_Eq;
+if q==0
+   bq=0;
+end
+ for i=1:repeat
+ SigmaB_update
+Noise_update;
+ end
+
 else
 %         display('rifiutata')
-     Noise_update;
-    SigmaB_update;
+  for i=1:repeat
+SigmaB_update
+Noise_update; 
+end
 end
 

@@ -1,8 +1,8 @@
 
 
 
-bestmodel=mode(modelserie(modelserie~=0));
-[ bestprocess,bestnoise] = ord2Model( bestmodel,Process_all,Noise_all);
+bestmodel_P=mode(modelserie_process);
+[ bestprocess] = ord2Model_separate( bestmodel,Process_all);
 % if it<burnin+100
 file= fopen('Risultati.txt','w');
 % end

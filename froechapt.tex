@@ -1,0 +1,198 @@
+
+\chapter{Il metodo FROE}
+Nell'articolo \emph{Computational system identification for Bayesian
+NARMAX modelling} l'algoritmo di stima con metodo Bayesiano viene confrontato con un algoritmo più classico che verrà presentato in questo capitolo.\\
+Il nome dell'algoritmo è FROE, acronimo che sta per Foward Regression Orthogonal Estimator.\\
+Si spiegherà inizialmente l'algoritmo FROE applicato ad un modello generico supponendo di avere a disposizione i segnali per costruire il regressore. Successivamente si estenderà l'idea al modello Narmax, preoccupandosi di inserire nell'algoritmo la stima del segnale di rumore e quindi del modello dinamico del rumore.\\
+Si consideri un modello di sistema
+\begin{equation}
+y(t)=p(t)^T \theta +e(t)
+\end{equation}
+Dove $p(t)$ è il regressore (anche non lineare), $\theta$ è il vettore dei parametri e $e(t)$ l'attuale campione di rumore bianco.
+Considerando una finestra temporale si possono impilare N equazioni di regressione
+e ottenere l'equazione vettoriale
+\begin{equation}
+y=P\theta +e
+\end{equation}
+Assumendo che $P^TP$ sia positiva definita 
+si può fattorizzare come
+\begin{equation}
+P^TP=A^TDA
+\end{equation}
+dove D è diagonale con elementi positivi e A è triangolare superiore con diagonale principale costituita da elementi pari a 1.
+Dunque
+\begin{equation}
+y=P(A^{-1}A)\theta +e
+\end{equation}
+\begin{equation}
+y=Wg+e
+\end{equation}
+Con
+\begin{equation}
+W=PA^{-1} \label{wdef}
+\end{equation}
+\begin{equation}
+g=A\theta
+\end{equation}
+Il vantaggio di questa formulazione è che $W$ è ortogonale, infatti
+\begin{equation}
+W^TW=(PA^{-1})^T(PA^{-1})=A^{-T}P^{T}PA^{-1}=D \label{ort}
+\end{equation}
+come si vedrà in seguito l'ortogoalità permette di valutare separatamente la rilevanza di ciascun regressore.
+Dalla precedente equazione si ricava anche
+\begin{equation}
+\{D\}_{ii}=\sum_{t=1}^N w_i(t)^2
+\end{equation}
+I regressori possono essere ottenuti usando ricorsivamente la tautologia
+\begin{equation}
+W=P-W(A-I)
+\end{equation}
+dunque indicando con $w_i$ la i-esima colonna di $W$\\
+con $p_i$ la i-esima colonna di $P$\\
+con $a_{ij}$ gli elementi della matrice $A$ (ricordando che è triangolare superiore)
+si pone
+\begin{align*}
+w_1&=p_1\\
+w_2&=p_2-a_{12}w_1\\
+w_3&=p_3-a_{13}w_1-a_{23}w_2\\
+&\vdots\\
+w_N&=p_N-\sum_{i=1}^{N-1}a_{iN}w_i\\
+\end{align*}
+Usando la (\ref{ort}) e la (\ref{wdef}) si ottiene 
+\begin{equation}
+A=D^{-1}W^TP
+\end{equation}
+dunque
+\begin{equation}
+a_{ij}=\frac{\sum_{t=1}^N{w_i(t)^Tp_j(t)}}{\sum_{t=1}^Nw_i(t)^2}
+\end{equation}
+L'espressione sopra vale ovviamente solo per la parte triangolare superiore della matrice ovvero per $i>l$.\\
+Gli altri elementi sono fissati la struttura della matrice spiegata precedentemente, dunque 1 sulla diagonale e 0 nella parte triangolare inferiore.\\
+Il vettore dei parametri invece soddisfa
+\begin{equation}
+g=D^{-1}W^T(y-e)
+\end{equation}
+e  si stima tralasciando il rumore bianco come
+\begin{equation}
+\hat{g}=D^{-1}W^Ty
+\end{equation}
+\begin{equation}
+\hat{g}_i=\frac{\sum_{t=1}^N{w_i(t)^Ty(t)}}{\sum_{t=1}^Nw_i(t)^2}
+\end{equation}
+La stima dei parametri originali  si può ricavare utilizzando ricorsivamente la tautologia
+\begin{equation}
+\theta=\hat{g}-(A-I)\theta
+\end{equation}
+da cui
+\begin{align*}
+\label{origparam}
+\hat{\theta}_M &=\hat{g}_M\\
+\hat{\theta}_{M-1} &=\hat{g}_{M-1}-a_{M-1,M}\hat{\theta}_M\\
+\hat{\theta}_{M-2} &=\hat{g}_{M-2}-a_{M-2,M}\hat{\theta}_M-a_{M-2,M-1}\hat{\theta}_{M-1}\\
+&\vdots \\
+\hat{\theta}_{i} &=\hat{g}_{i}-\sum_{k=i-1}^Ma_{i,k}\hat{\theta}_k\\
+\end{align*}
+Il procedimento è equivalente alla stima ai minimi quadrati di $\theta$ qualora di abbia l'espressione di P
+infatti si ottiene
+\begin{equation}
+\hat{\theta}=(P^TP)^{-1}P^Ty
+\end{equation}
+tuttavia la formulazione precedente consente di fare delle considerazioni utili per estendere il metodo al caso in cui il regressore P è incognito e va costruito scegliendo in sequenza alcuni termini da quelli disponibili.\\
+Il vantaggion sarà chiaro nelle prossime sezioni
+\section{Giustificazione della metrica ERR}
+\begin{align*}
+y^Ty&=(Wg+e)^T(Wg+e)\\
+&=g^TW^TWg+e^Te+2g^TW^Te\\
+&=g^TDg+e^Te+2g^TW^Te
+\end{align*}
+Se il processo è ergodico e se il rumore al passo attuale è scorrelato dal regressore allora $W^Te=0$ dunque
+\begin{align*}
+y^Ty&=g^TDg+e^Te\\
+\sum_{t=1}^Ny^2(t)&=\sum_{j=1}^M g_j^2 d_{jj}+\sum_{t=1}^Ne^2(t) \\
+\sum_{t=1}^Ny^2(t)&=\sum_{j=1}^M g_j^2 \sum_{t=1}^N w_j(t)^2+\sum_{t=1}^Ne^2(t) \\
+\frac{1}{N}\sum_{t=1}^Ny^2(t)&=\sum_{j=1}^M g_j^2 \frac{1}{N}\sum_{t=1}^N w_j(t)^2+\frac{1}{N}\sum_{t=1}^Ne^2(t) \\
+\end{align*}
+Si noti che la precedente equazione coinvolge la stima (al finito) delle varianze, al limite  per N che tende all'infinito si avrebbe
+\begin{equation}
+\sigma_y^2=\sum_{j=1}^M g_j^2 \sigma_{w_j}^2+\sigma_e^2 
+\end{equation}
+Se uso il vettore $\hat{g}$ però sto completamente ignorando il rumore e dunque posso approssimare la relazione sopra come
+\begin{equation}
+\sigma_y^2\sim \sum_{j=1}^M \hat{g}_j^2 \sigma_{w_j}^2
+\end{equation}
+Quindi si può sostenere che la frazione di varianza dell'uscita giustificata dal regressore j-esimo è circa
+\begin{equation}
+\frac{\hat{g}_j^2 \sigma_{w_j}^2}{\sigma_y^2}
+\end{equation}
+che approssimata al finito da' l'espressione della metrica detta ERR (Error Reduction Ratio)
+\begin{equation}
+[ERR]_i=\frac{\hat{g}_i\sum_{t=1}^N w_i(t)^2}{\sum_{t=1}^N y(t)^2}
+\end{equation}
+In base a tale metrica si può costruire un ordinamento di preferenze tra i possibili regressori (quindi tra i possibili termini dello sviluppo Narmax), partire da un modello vuoto e aggiungere progressivamente i termini che hanno ERR più alto.\\
+Si noti che questo è un metodo Greedy che porta ad una soluzione sub-ottima per qualsiasi funzionale di costo nell'errore di regressione.\\
+Successivamente si indicherà come modificare l'algoritmo per renderlo più flessibile.\\
+Si enuncia adesso l'algoritmo
+\section{Algoritmo FROE}
+Si abbiano a disposizione $M_{max}$ termini dello sviluppo polinomiale.\\
+Ciascun termine, darà luogo a un vettore di regressione $p_i(t)$.\\
+Inizialmente si considerino tutti i regressori $p_i(t)$  come possibili candidati per $w_i(t)$.\\
+\begin{enumerate}
+\item Per ogni i si ponga $w_1^{(i)}(t)=p_i(t) $\\
+\item Si calcoli $\hat{g}_1^{(i)}=\frac{\sum_{t=1}^N{w_1^{(i)}(t)^Ty(t)}}{\sum_{t=1}^Nw_1^{(i)}(t)^2}$ , $[ERR]_1^{(i)}=\frac{\hat{g}_1^{(i)}\sum_{t=1}^N w_1^{(i)}(t)^2}{\sum_{t=1}^N y(t)^2}$
+\item Si ponga $j=arg \min_i [ERR]_1^{(i)}$, $w_1(t)=w_1^{(i)}(t) $ , $\hat{g}_1=\hat{g}_1^{(j)}$
+\item Per ogni $i\neq j$ si calcoli \[a_{12}^{(i)}=\frac{\sum_{t=1}^N{w_1(t)^Tp_i(t)}}{\sum_{t=1}^Nw_1(t)^2}\]
+si ponga $w_2^{(i)}(t)=p_i(t)-a_{12}^{(i)}w_1(t) $
+\item Si calcoli $\hat{g}_2^{(i)}=\frac{\sum_{t=1}^N{w_2^{(i)}(t)^Ty(t)}}{\sum_{t=1}^Nw_2^{(i)}(t)^2}$ , $[ERR]_2^{(i)}=\frac{\hat{g}_2^{(i)}\sum_{t=1}^N w_2^{(i)}(t)^2}{\sum_{t=1}^N y(t)^2}$
+\item Come prima si scelgano i vettori e i valor dei parametri corrispondenti al massimo ERR
+\item Si vada avanti ad aggiungere regressori fino a quando $1-\sum_i^{M_s} [ERR]_i < \rho$ con $\rho$ tolleranza prefissata, oppure quando $M_s=M$
+\end{enumerate}
+Alla fine della procedura si possono usare le formule (\ref{origparam}) per ricavare i parametri nella base originale.
+Tale metodo è sub-ottimo perchè non massimizza la porzione di varianza di uscita spiegta complessivamente dai regressori ma massimizza iterazione per iterazione l'incremento alla varianza spiegata.
+\section{Applicazione dell'algoritmo FROE all'identificazione di un modello NARMAX}
+\begin{enumerate}
+\item Utilizzare l'algoritmo FROE per stimare il modello di processo.
+\begin{equation}
+\sum^{n_p}_{j=1}w_{j}(t)\hat{g}_{j}
+\end{equation}
+La selezione termina quando
+\begin{equation}
+1-\sum^{n_p}_{j=1}[err]_j<\rho_p
+\end{equation} 
+dove $n_p$ è il numero di termini di processo estratti
+\item Si pone $k=0$ e si calcola il residuo iniziale
+\begin{equation}
+\epsilon^{(k)}(t)=y(t)-\sum^{n_p}_{j=1}w_{j}^{(k)}(t)\hat{g}_{j}^{(k)}
+\end{equation}
+\item Si pone $k=k+1$ e si usa FROE per il modello di rumore
+la selezione termina quando
+\begin{equation}
+1-\sum^{n_p+n_n(k)}_{j=1}[err]_j<\rho_n
+\end{equation} 
+\item Si calcola il residuo usando però i regressori originali (quelli non ortogonali) e i coefficienti convertiti attraverso la formula (\ref{origparam})
+\begin{equation}
+\epsilon^{(k)}(t)=y(t)-\sum^{n_p+n_n(k)}_{j=1}p_{j}^{(k)}(t)\hat{\theta}_{j}^{(k)}
+\end{equation}
+Si evita di usare $w_{j}^{(k)}$ per calcolare il nuovo residuo perchè alcuni di essi sono stati calcolati usando il vecchio residuo, si cerca di limitare la dipendenza dal vecchio residuo allo stretto necessario.
+\item Se $||\epsilon^{(k)}-\epsilon^{(k-1)} ||<\gamma$ con $\gamma$ una qualche tolleranza l'algoritmo si ferma, altrimenti si ripete dal punto 3.
+\end{enumerate}
+\section{Aggiunta dell'algoritmo di pruning}
+Come percedentemente accennato, l'algoritmo FROE è sub-ottimo nel senso che non massimizza la spiegazione della varianza di uscita ma massimizza ciascun incremento alla spiegazione. Non si ha la garanzia di ottenere il modello con MSPE (mean square prediction error) minore tra quelli possibili e nemmeno quello con il minimo numero di regressori.\\
+L'ERR per lo stesso regressore può variare molto a seconda dell'ordine con cui vengono presi in considerazione i regressori.\\
+Le analisi delle storie temporali dell'algoritmo hanno riportato i seguenti comportamenti indesiderati:
+\begin{itemize}
+\item I primi termini scelti sono quasi sempre termini autoregressivi indipendentemente dal vero modello, questo perchè di solito tali termini determinano un notevole aumento della varianza rispetto al modello nullo rispetto agli altri.
+\item L'ERR è grande per i primissimi termini e decresce notevolmente per i successivi, anche sesarebbero termini rilevanti
+\item Se non è disponibile un termine  importante entrano a far parte del modello molti termini sbagliati.
+\end{itemize}
+In generale questo algoritmo presenta una tendenza a introdurre molti termini sbagliati che aumentano la complessità ma non portano un incremento significativo delle performance in termini di MSPE.\\
+E' utile quindi inserire un ulteriore meccanismo che elimina i regressori ridondanti o poco significativi in termini di MSPE. Tale procedura è detta di \emph{pruning}.\\
+La procedura di pruning si inserisce in FROE dopo che un nuovo regressore è stato aggiunto.\\
+Il funzionamento dell'algoritmo è il seguente
+\begin{enumerate}
+\item Per ogni regressore nel modello, si considera il modello derivato escludendolo, si calcolano i parametri corrispondenti e si calcola l'indice di prestazione (es MSPE)
+\item Si sceglie come peggior regressore, quello che escludendolo ha dato il valore di indice prestazionale più alto
+\item Se l'indice di prestazione del modello derivato escludendo il regressore peggiore è addirittura più alto dell'indice di prestazione calcolato per il modello del passo precedente (senza le esclusioni) allora il regressore peggiore viene effettivamente eliminato
+\item Se è avvenuta una eliminazione, si ripetono i passaggi per valutare se ne fossero possbili altre; in caso contrario si procede con l'algoritmo FROE
+\end{enumerate}
+L'algoritmo con l'aggiunta del pruning combina la riduzione dell'MSPE alla riduzione del numero di regressori.
+Solitamente dopo una operazione di pruning importante in cui sono stati eliminati diversi termini, si ha un buon compromesso tra compattezza del modello e prestazioni.

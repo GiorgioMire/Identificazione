@@ -1,17 +1,27 @@
 \chapter{Algoritmo Metropolis Hasting}
 Supponiamo di voler estrarre campioni da una distribuzione p(m) nota, difficile da
 campionare direttamente.
-Si pu`o chiedere che la distribuzione obiettivo sia
-distribuzione di regime di una catena di Markov. Una catena si dice ergodica se
+Si può  chiedere che la distribuzione obiettivo sia
+distribuzione di regime di una catena di Markov.\\ 
+Un processo stocastico markoviano o processo di Markov è un processo stocastico $\{X(t_n)\}_n$ nel quale la probabilità di transizione che determina il passaggio a uno stato di sistema dipende unicamente dallo stato di sistema immediatamente precedente e non dal come si è giunti a tale stato. Formalmente
+\begin{equation}
+P(X(t_{n+1})\leq x_{n+1}|X(t_n)= x_n, X(t_{n-1})= x_{n-1}, \ldots, X(t_0)= x_0) = P(X(t_{n+1})\leq x_{n+1}|X(t_n)=x_n)
+\end{equation}
+Ogni catena di Markov è caratterizzata da un operatore di transizione che mappa la densità di probabilità sugli stati al tempo attuale in quella al tempo successivo. Per fare una analogia, nelle catene a stato discreto e finito l'operatore era  rappresentato dalla matrice di transizione mentre nelle catene a stato continuo è dato dal il funzionale
+\begin{equation}
+Tr[\bullet]=\int \bullet(x)s(x'|x)dx
+\end{equation}
+Dove $s(x'|x)$ è una funzione di due variabili di stato che descrive la probabilità di transitare dal vecchio stato $x$ al nuovo stato $x'$ ed è detto kernel.
+ Una catena si dice ergodica se
 dopo un certo tempo (transitorio iniziale) , essa converge all'unica distribuzione
 di regime indipendentemente dalla distribuzione di partenza.
-Le condizioni necessarie per l’ergodicit`a della catena sono:
+Le condizioni necessarie per l’ergodicità   della catena sono:
 \begin{itemize}
-\item \textbf{irriducibilit`} : la probabilit`a di visitare ciascuno stato a partire da ciascuno
-stato `e strettamente positiva
-\item \textbf{aperiodicità} : una catena `e periodica se pu`o ritornare in un certo stato solo
-a istanti multipli di un qualche intero maggiore di 1. Una catena `e aperiodica
-se non `e periodica.
+\item \textbf{irriducibilità} : la probabilità   di visitare ciascuno stato a partire da ciascuno
+stato è   strettamente positiva
+\item \textbf{aperiodicità} : una catena è periodica se può  ritornare in un certo stato solo
+a istanti multipli di un qualche intero maggiore di 1. Una catena è   aperiodica
+se non è   periodica.
 \end{itemize}
 
 In poche parole, fissato un qualsiasi istante abbastanza grande e un qualsiasi stato,
@@ -20,49 +30,90 @@ quello stato a quell’istante. La questione diventa quindi come scegliere il ke
 \begin{equation*}
 s(x' |x) 
 \end{equation*}
-(probabilit`a di transizione dal vecchio stato m al nuovo stato m' ) della catena,
+(probabilità   di transizione dal vecchio stato m al nuovo stato m' ) della catena,
 in modo che la catena sia ergodica e che la distribuzione di regime sia proprio p(m).
-Una condizione sufficiente non necessaria `e che la distribuzione obiettivo soddisfi la
-condizione di reversibilit`a
-
+Una condizione sufficiente non necessaria è   che la distribuzione obiettivo soddisfi la
+condizione di reversibilità (detta anche di bilancio dettagliato).
+Questa proprietà, nella sua forma generale dice che la probabilità di risiedere in un sottoinsieme A dello spazio di stato e di transitare in un sottoinsieme B, deve essere la stessa qualora si scambino i ruoli dei sottoinsiemi.\\
+Formalmente 
+\begin{equation}
+\int_{(x,x')\in A\times B}p(x)s(x' |x) dx dx'= \int_{(x,x')\in A\times B}p(x')s(x|x' )dx dx'
+\end{equation}
+che vale sicuramente se
 \begin{equation}
 p(x)s(x' |x) = p(x')s(x|x' )
 \end{equation}
 
-L'operatore di transizione è quello che nelle catene a stato discreto e finito era rappresentato dalla matrice di transizione mentre nelle catene a stato continuo è il funzionale
-\begin{equation}
-Tr[\bullet]=\int \bullet(x)s(x'|x)dx
-\end{equation}
-Una  densit`a di probabilit`a $\ph$ `e detta stazionaria se `e autofunzione
+Una  densità   di probabilità   $\ph$ è   detta stazionaria se è   autofunzione
 dell’operatore di transizione della catena, ovvero\\
 \begin{equation}
 Tr[\ph]=\ph
 \end{equation}
-e semplice dimostrare che se vale la condizione di reversibilit`a allora la distribuzione
-`e stazionaria infatti
+e semplice dimostrare che se vale la condizione di reversibilità   allora la distribuzione
+è   stazionaria infatti
 \begin{equation*}
 \begin{split}
 Tr[\ph]=\int \ph(x)s(x'|x)dx=\int \ph(x')s(x|x')dx=\\
 \ph(x')\int s(x|x')dx=\ph(x')\cdot 1=\ph(x')
 \end{split}
 \end{equation*}
+Si dimostra inoltre che se vale la condizione di reversibilità allora la probabilità della catena di Markov converge alla probabilità stazionaria.\\
+Si definisca la distanza della distribuzione attuale da quella stazionaria\\
+\begin{equation}
+D=\int_x \left\vert (p(x) - \ph(x))\right\vert dx 
+\end{equation}
+La distanza al passo seguente sarà
+\begin{equation}
+\begin{split}
+D'=\int_{x'} \left\vert (Tr[p(x)] - \ph(x')\cdot 1) \right\vert dx'\\
+=\int_{x'} \left\vert (\int_{x}p(x)s(x'|x)dx - \ph(x')\int_{x}s(x|x')dx) \right\vert dx'=\\
+=\int_{x'} \left\vert(\int_{x}p(x)s(x'|x)dx  - \int_{x}\ph(x')s(x|x')dx) \right\vert dx'=\\
+=\int_{x'} \left\vert(\int_{x}p(x)s(x'|x)dx  - \int_{x}\ph(x)s(x'|x)dx) \right\vert dx'=\\
+=\int_{x'} \left\vert (\int_{x}[p(x)-\ph(x)]s(x'|x)dx ) \right\vert dx'=\\
+\end{split}
+\end{equation}
+Applicando la disuguaglianza triangolare  e usando il fatto che la ddp è non negativa
+\begin{equation}
+\begin{split}
+ \left\vert \int_{x}[p(x)-\ph(x)]s(x'|x )dx \right\vert \leq    \int_{x}\left\vert[p(x)-\ph(x')]s(x'|x)\right\vert dx \\
+ =\int_{x} \left\vert[p(x)-\ph(x)]\right\vert   s(x'|x)dx \\
+\end{split}
+\end{equation}
 
-Se si sceglie un kernel arbitrario uguale ad una probabilit`a di transizione facile
-da campionare $s(\direct) = q(\direct) $ solitamente la condizione di reversibilit`a non `e
+quindi
+\begin{equation}
+\begin{split}
+D'\leq\int_{x}\int_{x'} \left\vert[p(x)-\ph(x)]\right\vert  s(x'|x)dx dx'=\\
+ \int_{x}\left\vert[p(x)-\ph(x)]\right\vert   \int_{x}s(x'|x)dx'dx \\
+ \int_{x} \left\vert[p(x)-\ph(x)]\right\vert dx =D\\
+\end{split}
+\end{equation}
+La distanza al passo successivo è sempre minore o uguale a quella precedente.\\
+In realtà affinchè la distanza si mantenga uguale con la transizione è necessario che $p(x)-\ph(x)$ abbia lo stesso segno per ogni $x'$
+cosa che non può accadere perchè le due quantità che si sottraggono sono entrambe normalizzate a 1.\\
+L'unico caso in cui la distanza si mantiene è proprio quando è nulla.
+
+
+
+
+
+
+Se si sceglie un kernel arbitrario uguale ad una probabilità   di transizione facile
+da campionare $s(\direct) = q(\direct) $ solitamente la condizione di reversibilità   non è   
 soddisfatta. Solitamente si ha uno sbilanciamento che significa che alcune transizioni
-sono pi`u probabili in un certo verso.
+sono più  probabili in un certo verso.
 \begin{equation}
 \ph(x)s(\direct)>\ph(x')s(\inverse)
 \end{equation}
 
-In tal caso, viste le distribuzioni di partenza e la probabilit`a di transizione scelta `e
-pi`u probabile osservare la transizione $x\rightarrow x'$ piuttosto che la transizione $x'\rightarrow x$
-Si cerca quindi di ristabilire l’equilibrio scegliendo come kernel la probabilit`a di
+In tal caso, viste le distribuzioni di partenza e la probabilità   di transizione scelta è   
+più  probabile osservare la transizione $x\rightarrow x'$ piuttosto che la transizione $x'\rightarrow x$
+\\Si cerca quindi di ristabilire l’equilibrio scegliendo come kernel la probabilità   di
 transizione moltiplicata per un fattore correttivo 
 \begin{equation}
 q(\direct) = \gamma(\direct)q(\direct)
 \end{equation}
-In particolare si pu`o interpretare $\gamma(\direct)$ come la probabilit`a di accettare la mossa $x \rightarrow x'$. Imponendo quindi che valga
+In particolare si può  interpretare $\gamma(\direct)$ come la probabilità   di accettare la mossa $x \rightarrow x'$. Imponendo quindi che valga
 
 
 \begin{equation}
@@ -73,15 +124,15 @@ si ricava
 \frac{\gamma(\direct)}{\gamma(\inverse)}=\frac{\ph(x')q(\inverse)}{\ph(x)q(\direct)}
 \end{equation}
 
-Perch`e si abbia coerenza con la eq[CITARE EQUAZIONE] bisogna che il rapporto al membro sinistro sia minore di 1. In particolare si può scegliere
+Perchè   si abbia coerenza con la eq (3.4) bisogna che il rapporto al membro sinistro sia minore di 1. In particolare si può scegliere
 
 \begin{itemize}
 \item $\gamma(\inverse)=1$ che equivale ad accettare tutte le transizioni $m' \rightarrow m$ che sono meno
 frequenti
-\item $\gamma(\direct)=min\left\lbrace 1,\frac{\ph(x')q(\inverse)}{\ph(x)q(\direct)}\right\rbrace$ fattore di riduzione delle transizioni pi`u frequenti
+\item $\gamma(\direct)=min\left\lbrace 1,\frac{\ph(x')q(\inverse)}{\ph(x)q(\direct)}\right\rbrace$ fattore di riduzione delle transizioni più  frequenti
 \end{itemize}
 \newpage
- L'algoritmo MH è così definito\vspace{1em}\\
+ L'algoritmo MH è    così definito\vspace{1em}\\
 \hrule 
 \textbf{Algoritmo} Metropolis Hastings
 \hrule

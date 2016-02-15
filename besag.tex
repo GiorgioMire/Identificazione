@@ -1,16 +1,14 @@
 \section{Equazione del candidato di Besag}
-La formula utilizzata per semplificare l’espressione del rapporto $r_a$ `e detta formula
-del candidato. Il nome le `e stato attribuito dal professore e statista Julian Ernst
-Besag a fine anni ’80 quando era docente alla University of Durham. Egli riporta
-la formula in un articolo spiegando di averla letta (senza dimostrazione) nello svol-
-gimento di un esame da parte di uno studente del quale per`o non ricordava pi`
-u il
+La formula utilizzata per semplificare l’espressione del rapporto $r_a$ è detta formula
+del candidato. Il nome le è stato attribuito dal professore e statista Julian Ernst
+Besag a fine anni ’80 quando era docente alla University of Durham (Inghilterra). Egli riporta
+la formula in un articolo spiegando di averla letta (senza dimostrazione) nello svolgimento di un esame da parte di uno studente del quale però non ricordava più il
 nome. Non sapremo quindi mai chi fu il primo ad averla pensata. Nonostante anche
-Besag tralasci la dimostrazione della formula, questa non `e complessa e deriva in
-sostanza dalla formula di Bayes applicata opportunamente alla densit`a congiunta
+Besag tralasci la dimostrazione della formula, questa non è complessa e deriva in
+sostanza dalla formula di Bayes applicata opportunamente alla densità congiunta
 delle tre variabili in gioco.
 Si supponga di aver raccolto un vettore di misurazioni x ,sia $\theta$ un vettore di parametri
-del modello, ci si chiede quale sia la densit`a di probabilit`a di una nuova misura z
+del modello, ci si chiede quale sia la densità di probabilità di una nuova misura z
 condizionata alle vecchie misure ovvero $p(z|x)$
 
 tesi:
@@ -21,12 +19,12 @@ dimostrazione: Dalla definizione di ddp condizionata
 \begin{equation}
 p(z|x)=\frac{p(z,x)}{p(x)}
 \end{equation}
-Per sviluppare il numeratore `e necessario prima di tutto dimostrare un passaggio
+Per sviluppare il numeratore è necessario prima di tutto dimostrare un passaggio
 intermedio Si consideri la tautologia
 \begin{equation}
 p(x,\theta,z)=p(z,\theta,z)
 \end{equation}
-dove ciascun membro `e la ddp congiunta delle tre variabili in esame. utilizzando la
+dove ciascun membro è la ddp congiunta delle tre variabili in esame. utilizzando la
 definizione di ddp condizionata
 \begin{equation}
 p(\theta|z, x)p(z, x) = p(z, x|\theta)p(\theta)
@@ -62,8 +60,7 @@ si ha
 \begin{equation}
 p(k,\pk|y,\la,\va)=\frac{p(k,\pk|\ak)p(\ak|y,\la,\va)}{p(\ak|k,\pk,y\la,\va)}
 \end{equation}
-usando la definizione di probabilit`a condizionata si nota come il prodotto al numer-
-atore non sia altro che la probabilit`a congiunta delle variabili k, $\pk$ e $\ak$ , ottenendo
+usando la definizione di probabilità condizionata si nota come il prodotto al numeratore non sia altro che la probabilità congiunta delle variabili k, $\pk$ e $\ak$ , ottenendo
 quindi
 \begin{equation}
 p(k,\pk|y,\la,\va)=\frac{p(k,\pk,\ak|y,\la,\va)}{p(\ak|y,k',\pknew,\va)}
@@ -84,8 +81,8 @@ Usando Bayes l'integranda diventa
 \begin{align*}
 & \frac{1}{p(\y)}p(\y|k,\pk,\ak,\la,\va,q,\eq,\lb,\bq,\ve)p(k,\pk,\ak|\la,\va)\\
 =&\frac{1}{p(\y)}p(k|\la)p(\pk)p(\y|k,\pk,\ak,\la,q,\eq,\lb,\bq,\ve)p(ak|k,\va)\\
-=&\frac{1}{p(\y)}p(k|\la)p(\pk)\normal{\pk\ak+2\y^T\eq\bq}{\ve I_k}\normal{0}{\va I_k}\\
-=& \mathcal{K}\cdot exp[ \mez \sigma_e^{-2}(2\y^T\pk\ak+2\y^T\eq\bq-\bq^T\eq^T\eq\bq-2\ak^T\pk^T\eq\bq-\y^T\y)-\\
+=&\frac{1}{p(\y)}p(k|\la)p(\pk)\normal{\pk\ak+\eq\bq}{\ve I_k}\normal{0}{\va I_k}\\
+=& \mathcal{K}\cdot exp[ \mez \sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\mez \sigma_e^{-2}\ak^{T}(2\pk^{T}\y-2\pk^T\eq\bq)-\\
 &\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2}I_k)\ak ]
 \end{align*}
 con
@@ -94,15 +91,15 @@ con
 \end{equation}
 Si moltiplichi e si divida per $\mathcal{N}({\ak |\mu,C})$
 \begin{align*}
-&\mathcal{K}\sqrt{(2\pi)^k det(C)} exp[ \mez \sigma_e^{-2}(2\y^T\pk\ak+2\y^T\eq\bq-\bq^T\eq^T\eq\bq-2\ak^T\pk^T\eq\bq-\y^T\y)-\\
-&\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2}I_k)\ak +\mez(\ak-\mu)^TC^{-1}(\ak-\mu) ]\mathcal{N}(\ak|\mu,C)
+&\mathcal{K}\sqrt{(2\pi)^k det(C)} exp[ \mez \sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\mez \sigma_e^{-2}\ak^{T}(2\pk^{T}\y-2\pk^T\eq\bq)-\\
+&\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2}I_k)\ak+\mez(\ak-\mu)^TC^{-1}(\ak-\mu) ]\mathcal{N}(\ak|\mu,C)
 \end{align*}
 con semplici manipolazioni algebriche si ottiene
 \begin{align*}
 \mathcal{K}\sqrt{(2\pi)^k det(C)}
-exp[\mez\sigma_e^{-2}(2\y^T\eq\bq-\bq^T\eq^T\eq\bq-\y^T\y)-\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2} I_k-C^{-1})\ak+\ak^T(\sigma_e^{-2}\pk^T\y-\sigma_e^{-2}\pk^T\eq\bq-C^{-1}\mu)+\mez(\mu^TC^{-1}\mu)]\mathcal{N}(\ak |\mu, C)
+exp[\mez\sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)-\mez\ak^T(\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2} I_k-\\C^{-1})\ak+\ak^T(\sigma_e^{-2}\pk^T\y-\sigma_e^{-2}\pk^T\eq\bq-C^{-1}\mu)+\mez(\mu^TC^{-1}\mu)]\mathcal{N}(\ak |\mu, C)
 \end{align*}
-annullando l’espressione tra parentesi che costituisce la matrice della forma quadratica in a $\ak$ e l’espressione tra parentesi che costituisce la matrice che moltiplica a $\ak^T$ ,si ricava l’espressione per la media e la covarianza
+annullando l’espressione tra parentesi che costituisce la matrice della forma quadratica in a $\ak$ e l’espressione tra parentesi che costituisce la matrice che moltiplica  $\ak^T$ ,si ricava l’espressione per la media e la covarianza
 \begin{equation}
 C=\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2} I_k
 \end{equation}
@@ -112,8 +109,8 @@ C=\sigma_e^{-2}\pk^T\pk+\sigma_a^{-2} I_k
 grazie al quale l’integranda si semplifica in modo tale che tutta la dipendenza da $\ak$ sia attribuita alla gaussiana di parametri $\mu$ e $C$.\\
 Calcolando l’integrale si ottiene
 \begin{align*}
-p(k,\pk | \y,\la,\va)&=\sqrt{(2\pi)^k det(C)}\mathcal{K}p(k |\la)p(\pk) exp[\mez\sigma_e^{-2}(2\y^T\eq\bq-\bq^T\eq^T\eq\bq-\y^T\y)+\\&\mez(\mu^T C^{-1}\mu)\int \mathcal{N}(\ak|\mu,C)d\ak\\
-&=p(k|\la)p(\pk)\sqrt{(2\pi)^k det(C)}\mathcal{K}\cdot exp[\mez \sigma_e^{-2}(2\y^T\eq\bq-\\ &\bq^T\eq^T\eq\bq-\y^T\y)+\mez(\mu^T C^{-1}\mu)]
+p(k,\pk | \y,\la,\va)&=\sqrt{(2\pi)^k det(C)}\mathcal{K}p(k |\la)p(\pk) exp[\mez\sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\\&\mez(\mu^T C^{-1}\mu)\int \mathcal{N}(\ak|\mu,C)d\ak\\
+&=p(k|\la)p(\pk)\sqrt{(2\pi)^k det(C)}\mathcal{K}\cdot exp[\mez \sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\mez(\mu^T C^{-1}\mu)]
 \end{align*}
 da cui
 \begin{equation}
@@ -121,3 +118,29 @@ r_a=\frac{p(k',\pknew|\y,\la,\va)}{p(k,\pk|\y,\la,\va)}=\frac{\sigma_a^{-k'}\sqr
 exp(\mez\muanew^T\invcanew\muanew)p(k'|\la)}{\sigma_a^{-k}\sqrt{det(\canew)}
 exp(\mez\mua^T\invca\mua)p(k|\la)}
 \end{equation}
+
+Nell'articolo originale non è esplicitato come comportarsi quando si propone una transizione da o verso $k=0$.\\
+Per rispondere bisogna notare che nel caso di modello vuoto si può pensare di avere matrice di regressione nulla e vettore dei parametri arbitrario, per convenzione si sceglierà $\ak=0$. Il valore di $\ak$ è allora deterministico.\\
+Tornando ad esprimere l'integranda si ha
+\begin{align*}
+=&\frac{1}{p(\y)}p(k=0|\la)p(\pk)p(\y|k,\pk,\ak,\la,q,\eq,\lb,\bq,\ve)p(ak|k,\va)\\
+=&\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\pk\ak+\eq\bq}{\ve I_k}\delta(\ak-0)\\
+=&\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\eq\bq}{\ve I_k}\delta(\ak-0)\\
+\end{align*}
+e dunque marginalizzando si ottiene
+\begin{align*}
+=&\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\eq\bq}{\ve I_k}\int\delta(\ak-0)d\ak\\
+=&\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\eq\bq}{\ve I_k}\\
+\end{align*}
+Il resto è analogo. Se si vuole per esempio calcolare il rapporto di accettazione $r_a(k=1\rightarrow k=0)$ si ottiene
+\begin{align*}
+\frac{p(k=0,\pk | \y,\la,\va)}{p(k=1,\pk | \y,\la,\va)}&=\frac{\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\eq\bq}{\ve I_k}}{p(k=1|\la)p(\pk)\sqrt{(2\pi)^k det(C_{k,\ak})}\mathcal{K}\cdot exp[\mez \sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}
+\end{align*}
+e semplificando
+\begin{align*}
+\frac{p(k=0,\pknew | \y,\la,\va)}{p(k=1,\pk | \y,\la,\va)}&=\frac{p(k=0|\la)}{p(k=1|\la)\sqrt{det(C_{k,\ak})}\sigma_a^{-k}\cdot exp[\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}=\frac{1}{\la\sqrt{det(C_{k,\ak})}\sigma_a^{-k}\cdot exp[\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}
+\end{align*}
+per il passaggio inverso si ha invece
+\begin{align*}
+\frac{p(k=1,\pknew | \y,\la,\va)}{p(k=0,\pk | \y,\la,\va)}=\frac{\la\sqrt{det(C_{k',\aknew})}\sigma_a^{-k'}\cdot exp[\mez(\mu_{k',\aknew}^T C_{k',\aknew}^{-1}\mu_{k',\aknew})]}{1}
+\end{align*}
