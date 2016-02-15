@@ -1,0 +1,9 @@
+
+___________________________ 
+
+ ITERAZIONE 794 
+
+EQUAZIONE TARGET
+akTarget=[0.8 ];
+MODELLO DI PROCESSO
+

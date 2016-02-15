@@ -10,10 +10,8 @@ eestim=zeros(size(e,1),size(e,2));
 
 ProcessTarget=[ 13 3 31 25];
 akTarget=[ -0.5 , 0.6 ,0.7 ,-0.7];
-NoiseTarget=[1]
-bqTarget=[0.9]
-% NoiseTarget=[1 24];
-% bqTarget=[ 0.2 , -0.3 ];
+NoiseTarget=[1 24];
+bqTarget=[ 0.2 , -0.3 ];
  
 for t=dynamicOrder+1:N
   

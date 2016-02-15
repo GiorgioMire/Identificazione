@@ -1,7 +1,7 @@
 
     dabuttare=[];
 for l=1:k
-    if(abs(ak(l))<0.005)
+    if(abs(ak(l))<0.05)
   dabuttare=[dabuttare,l]; 
     end
 end
@@ -20,7 +20,7 @@ ak(dabuttare)=[];
         k=length(Process_choosen);
     dabuttare=[];
     for l=1:q
-        if(abs(bq(l))<0.005)
+        if(abs(bq(l))<0.05)
        
              dabuttare=[dabuttare,l];
         end

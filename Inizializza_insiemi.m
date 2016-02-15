@@ -1,6 +1,7 @@
 %_____ Inizializziamo gli insiemi dei termini
 %______Inizializzo i termini di processo
 i=0;
+file=fopen('Lista_termini.txt','w')
 for upow=0:polinomialOrderP
     for ypow=0:polinomialOrderP
         for udelay=0:dynamicOrderP
@@ -14,10 +15,11 @@ for upow=0:polinomialOrderP
                 if condizione1 || condizione2 ||condizione3 || condizione4  || condizione5
                     break
                 else
-                    i=i+1
+                    i=i+1;
 s=sprintf('@(t,u,y)u(t-%i)^%i*y(t-%i)^%i',udelay,upow,ydelay,ypow);
 eval(['Process_all{i}=',s,';']);
-Process_all{i}
+name=func2str(Process_all{i});
+fprintf(file,'%i => %s\n',i,name(9:end))
    Process_avaiable(i)=i;              
                end
               
@@ -49,11 +51,12 @@ for upow=0:polinomialOrderN
                         if condizione1  ||condizione3 || condizione4
                             break
                         else
-                            i=i+1
+                            i=i+1;
                          s=sprintf('@(t,u,y,e)u(t-%i)^%i*y(t-%i)^%i*e(t-%i)^%i',udelay,upow,ydelay,ypow,edelay,epow);
 eval(['Noise_all{i}=',s,';']);
    Noise_avaiable(i)=i;    
-   Noise_all{i}
+   name=func2str(Noise_all{i});
+fprintf(file,'%i => %s\n',i,name(11:end))
                          
                         end
                         Noise_choosen=[];
@@ -66,11 +69,11 @@ eval(['Noise_all{i}=',s,';']);
         end
     end
 end
-
+fclose(file)
+edit Lista_termini.txt
 clear i
 
 
-%Process_all={@(t,u,y)u(t-1),@(t,u,y)y(t-1)}
 Process_avaiable=1:length(Process_all);
 Process_choosen=[];
 

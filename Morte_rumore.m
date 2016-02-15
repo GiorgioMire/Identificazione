@@ -18,10 +18,7 @@ Eq=New_Eq;
 if q==0
    bq=0;
 end
- for i=1:repeat
- SigmaB_update
-Noise_update;
- end
+ 
 
 else
 %         display('rifiutata')

@@ -5,7 +5,7 @@ SB=sigmaB;
 invC=SE^(-2)*(Eq.')*Eq+SB^(-2)*eye(q);%;
 C=inv(invC);
 for m=1:q
-      bhat(m)=normrnd(bq(m),C(m,m));
+      bhat(m)=normrnd(bq(m),proposal_factor*C(m,m));
     
     %PosteriorNew
     b=bq;

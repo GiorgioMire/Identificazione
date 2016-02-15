@@ -4,4 +4,4 @@ residual=ycut-ezp(Pk,ak,ycut)-ezp(Eq,bq,ycut);
 % plot(residual)
 % pause(0.01)
 eestim(cutInterval)=residual;
-eestim(abs(eestim)>2)=2;
+eestim(abs(eestim)>100)=100;

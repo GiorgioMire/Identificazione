@@ -1,16 +1,33 @@
 z=rand();
 
-if z<(BN(c,lambdaB,q,length(Noise_all)))
-     % display('Nascita Rumore')
+if q==0
+    B=1;
+elseif q==length(Noise_all)
+    B=0;
+else
+num=(lambdaB^(q+1))/factorial(q+1);
+den=(lambdaB^(q))/factorial(q);
+B=c*min(1,(num/den)^1);
+end
+
+if q>0
+num=(lambdaB^(q-1))/factorial(q-1);
+den=(lambdaB^(q))/factorial(q);
+D=c*min(1,(num/den)^1);
+end
+
+if z<B
+  %display('Nascita Processo')
     Nascita_rumore
-elseif z<(BN(c,lambdaB,q,length(Noise_all))+DN(c,lambdaB,q,length(Noise_all)))
-     %display('Morte Rumore')
+elseif z<(B+D)
+   % display('Morte Processo')
     Morte_rumore
 else 
-        % display('Aggiornamento Rumore')
-for i=1:repeat
-SigmaB_update
-Noise_update; 
-end
+   %  display('Aggiornamrento Processo')
+    for i=1:repeat
+ SigmaB_update
+ Noise_update;
+ end
+   
 end
 clear z

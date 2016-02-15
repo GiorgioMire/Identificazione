@@ -41,6 +41,3 @@ bestbq
 bqTarget
 bestnoise
 NoiseTarget
-
-figure
-hist(sk

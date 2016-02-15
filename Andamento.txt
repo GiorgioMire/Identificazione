@@ -1,0 +1,16 @@
+
+___________________________ 
+
+ ITERAZIONE 275 
+
+EQUAZIONE TARGET
+  y(t,1)=0.2*u(t)+ 0.3*y(t-1) +0.5*e(t-1)+0.6+ e(t);
+MODELLO DI PROCESSO
+
+ 1° termine= 0.85 * u(t-0)^0 * y(t-1)^0
+
+MODELLO DI RUMORE
+
+ 1° termine= 0.14 * u(t-0)^0 * y(t-1)^0* e(t-2)^1
+
+ 2° termine= 0.78 * u(t-0)^0 * y(t-1)^0* e(t-1)^1

@@ -4,10 +4,10 @@ cutInterval=t_base:t_end;
 workInterval=it:t_end;
 ycut=y(cutInterval);
 ucut=u(cutInterval);
-ework=eestim(workInterval);
+ework=e(workInterval);
 ywork=y(workInterval);
 uwork=u(workInterval);
-ecut=eestim(cutInterval);
+ecut=e(cutInterval);
 %_______________________________________
 % Shift della matrice Pk
 if ~isempty(Pk)
@@ -33,7 +33,7 @@ aggiunta=[];
 for i=1:length(Noise_choosen)
     pos=Noise_choosen(i);
     T=Noise_all{pos};
-    aggiunta(1,i)=T(t_end,u,y,eestim);
+    aggiunta(1,i)=T(t_end,u,y,e);
 end
 Eq=[Eq;aggiunta];
 
