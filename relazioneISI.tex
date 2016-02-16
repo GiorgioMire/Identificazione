@@ -1,11 +1,11 @@
-	\documentclass[10pt,a4paper,oneside,openany,noindent]{book}
+\documentclass[10pt,a4paper,oneside,openany,noindent]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{subfigure}
-\usepackage[margin=1.5cm]{geometry}
+\usepackage[margin=3cm]{geometry}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \setlength\parindent{0pt}
@@ -34,7 +34,13 @@ approccio bayesiano}
 \begin{document}
 \hspace{1em}
 \newpage
+
 \chapter{Introduzione}
+\section*{Premessa}
+
+Questo relazione rappresenta il progetto per l'esame \emph{Identificazione dei Sistemi Incerti} del corso di studi di Ingegneria Robotica e dell'Automazione di Pisa uno studio critico dell'articolo di ricerca \textit{Computational system identification for Bayesian
+NARMAX modelling} di Tara Baldacchino, Sean R. Anderson  e Visakan Kadirkamanathan.
+\section*{Motivazioni}
 Quando si vuole identificare un sistema dinamico bisogna
 \begin{itemize}
 \item stabilire la struttura del legge dinamica
@@ -215,7 +221,211 @@ Dopo un transitorio iniziale la catena finirà per campionare gli stati dalla di
 \input{Algoritmo}
 \input{besag}
 \input{tuning}
-\input{froechapt}
-
 \include{correzionesegno}
+\section*{Test dell'algoritmo}
+In questa sezione vengono mostrati i risultati ottenuti dalla mia implementazione dell'algoritmo nel caso proposto come esempio dall'articolo.\\ \vspace{2em}
+L'equazione alle differenze da identificare è
+\begin{align*}
+y(t)=&0.6y(t-2)-0.5u(t-1)y(t-1)-0.7u(t-2)^2\\
+&+0.7u(t-2)^2y(t-2)+0.2e(t-1)^1-0.3u(t-1)e(t-2)+e(t)
+\end{align*}
+\vspace{2em} \\
+I risultati sono riassunti nella seguente tabella, di seguito si entrerà nel dettaglio della spiegazione e dell'analisi dell'esecuzione dell'algoritmo. \vspace{2em} \\
+\begin{tabular}{|p{8em}|p{4em}|p{8em}|p{8em}|p{4em}|p{4em}|}
+\hline
+Termine & Presente  nel target? & Coefficiente Target & Coefficiente identificato & Confidenza & Bin Size\\
+\hline
+$y(t-2)$ & SI & 0.6 & 0.60404 &  0.7011 & 0.0161 \\ 
+\hline
+$u(t-1)y(t-1)$ & SI &  -0.5 &  -0.4992  &  0.7925 &   0.0147\\
+\hline
+$u(t-2)^2$ & SI &  -0.7 &  -0.6939  &  0.2068 &   0.0093\\ 
+\hline
+$u(t-2)^2y(t-2)$ & SI &   0.7 &   0.7002  &  0.4239  &  0.0113\\ 
+\hline
+$e(t-1)^1$  & SI &  0.2  &  0.2146  &  0.1403 &   0.0131\\
+\hline 
+ $u(t-1)^1e(t-2)^1$  & SI & -0.3 &  -0.3383  &  0.0558  &  0.0104\\
+\hline 
+\end{tabular}
+\vspace{2em} \\
+
+
+Per l'esecuzione sono stati simulati i dati di ingresso e di uscita.\\
+Nella costruzione, l'uscita simulata è stata volutamente sporcata dldisturbo bianco.\\
+\[u(t)\sim \mathcal{U}(-1,1)\]
+\[e(t)\in \normal{0}{\sigma^2_e} \hspace{3em} \sigma_e=0.1\]
+Nonostante i segnali siano stati generati con i generatori pseudocasuali di Matlab, è stato verificato 
+graficando la funzione di autocorrelazione che essi siano veramente bianchi \\
+L'uscita $y(t)$ è stata calcolata applicando ricorsivamente l'equazione alle differenze da identificare.\\
+Con tali scelte sono stati ottenuti i seguenti rapporti segnale-rumore
+\begin{equation}
+SNRu =15.2 dB
+\end{equation}
+\begin{equation}
+SNRy=23.6 dB
+\end{equation}
+Il setting dei parametri statici e le condizioni iniziali dei parametri dinamici sono i seguenti
+
+\begin{tabular}[t] {|p{10em}|p{0.5\linewidth}|}
+\hline
+\[lambdaA=2\]
+\[lambdaB=2\]
+& Valore  atteso iniziale del numero di parametri  \\ \hline
+
+\[sigmaA=5\]
+\[sigmaB=5\] &
+ Inizializzazione delle varianze delle proposal dei coefficienti\\ \hline
+\[c=0.3\] & Rapporto di frequenza tra le mosse dinamiche (morte e nascita) e quella
+ di aggiornamento\\ \hline
+ \[dynamicOrderP=2 \hspace{1em}\]
+\[dynamicOrderN=2 \hspace{1em}\] & Massimo ritardo che compare nei termini disponibili rispettivamente di processo e di rumore.  \\ \hline
+\[polinomialOrderP=3\]
+\[polinomialOrderN=3\] & Massimo grado polinomiale possibile \\ \hline
+
+
+\[alphaLA=0.5;\]\[alphaLB=0.5;\]  & Iperparametro di forma \\ \hline
+
+
+\[betaLA=1.1;\]\[betaLB=1.1;\]  &Iperparametro di scala \\ \hline
+
+\hline
+\end{tabular}
+\vspace{2em}
+\\
+Sono state eseguite 30000 iterazioni per studiare l'andamento temporale dell'algoritmo.\\
+Tuttavia la convergenza (almeno in termini di struttura del modello) richiede meno iterazioni come si evince dai grafici seguenti 
+\begin{figure}[ht]
+\quad
+\centering
+\begin{minipage}[t]{0.45\linewidth}
+
+\includegraphics[width=0.7\textwidth]{modesk.eps} 
+\caption{Miglior numero di termini di processo in funzione del numero di iterazioni.   }
+\label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[t]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{BestModelPTransitorio.eps}
+\caption{Identificativo del miglior  modello di processo in funzione del numero di iterazioni (Dettaglio del transitorio)}
+\label{fig:minipage2}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[ht]
+\quad
+\centering
+\begin{minipage}[t]{0.45\linewidth}
+
+\includegraphics[width=0.7\textwidth]{modesq.eps} 
+\caption{Miglior numero di termini di rumore in funzione del numero di iterazioni.   }
+\label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[t]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{BestModelNTransitorio.eps}
+\caption{Identificativo del miglior  modello di rumore in funzione del numero di iterazioni (Dettaglio del transitorio)}
+\label{fig:minipage2}
+\end{minipage}
+\end{figure}
+In particolare si ha che l'algoritmo 
+
+\begin{itemize}
+\item identifica correttamene il numero di termini di processo $k=4$  in 454 iterazioni
+\item identifica correttamene il numero di termini di rumore $q=2$  in 2598 iterazioni
+\item identifica correttamene la struttura del modello di processo  in 414 iterazioni
+\item identifica correttamene la struttura del modello di rumore  in 93 iterazioni
+\end{itemize}
+La convergenza dell'algoritmo per quanto riguarda i coefficienti è più difficile da provare in quanto si hanno a disposizione meno iterazioni (quelle in cui la catena è andata a risiedere in un modello con la struttura corretta).\\
+Si prenda ad esempio l'andamento del miglior coefficiente $a_2$ nel senso di
+\[\arg \max p(a_2|y,P_k,k)\] graficato qui sotto
+\begin{center}
+\includegraphics[width=0.4\linewidth]{bestcoeffak2eps.eps} 
+\end{center}
+Si può notare che  dopo 20000 iterazioni si ha ancora una fluttuazione del miglior coefficiente, cosa che potrebbe far dubitare della convergenza. La fluttuazione è però di 0.003 mentre l'ultima dimensione del bin per l'istogramma è 0.017. In realtà tutte le fluttuazioni (da quando la catena risiede per la prima volta nella struttura corretta del modello) sono di entità paragonabile.\\
+Si può ritenere dunque che l'algoritmo abbia portato in convergenza il coefficiente al valore\\ $-0.5\pm 0.003$ almeno a partire dall'iterazione 9000 (risultato che conferma la scelta degli autori dell'articolo di fermarsi a 9500 iterazioni)
+
+
+
+
+
+
+
+
+
+
+\begin{figure}[ht]
+\quad
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{histk.eps} 
+\caption{Probabilità a posteriori del numero di termini }
+\label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{histq.eps}
+\caption{Densità di probabilità di $a_2$ a posteriori}
+\label{fig:minipage2}
+\end{minipage}
+\end{figure}
+
+
+\begin{figure}[ht]
+\quad
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{ak_1.eps} 
+\caption{Densità di probabilità di $a_1$ a posteriori}
+\label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{ak_2.eps}
+\caption{Densità di probabilità di $a_2$ a posteriori}
+\label{fig:minipage2}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{ak_3.eps}
+\caption{Densità di probabilità di $a_3$ a posteriori}
+\label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{ak_4.eps}
+\caption{Densità di probabilità di $a_4$ a posteriori}
+\label{fig:minipage2}
+\end{minipage}
+\end{figure}
+
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{bq_1.eps}
+\caption{Densità di probabilità di $b_1$ a posteriori}
+\label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=0.7\textwidth]{bq_2.eps}
+\caption{Densità di probabilità di $b_2$ a posteriori}
+\label{fig:minipage2}
+\end{minipage}\\
+\end{figure}
+
+
 \end{document}

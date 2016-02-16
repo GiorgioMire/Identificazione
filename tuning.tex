@@ -1,12 +1,47 @@
 \chapter{Tuning degli iperparametri}
-La distribuzione gamma ha il seguente valor medio
+Il tuning degli iperparametri viene fatto basandosi sulle espressioni analitiche di valor medio e varianza della distribuzione.\\
+Nel caso della variabile Gamma che modella il valore atteso del numero di termini si ha il seguente valor medio
 \begin{equation}
-\mathbb{E}[\mathcal{G}\mathcal{A}(\alpha,\beta)]=\frac{\alpha}{\beta}
+\mathbb{E}[\mathcal{G}\mathcal{A}(\alpha,\beta)]=\frac{\alpha}{\beta}:=m
 \end{equation}
 e la seguente varianza
 \begin{equation}
-\mathbb{V}ar[\mathcal{G}\mathcal{A}(\alpha,\beta)]=\frac{\alpha}{\beta^2}
+\mathbb{V}ar[\mathcal{G}\mathcal{A}(\alpha,\beta)]=\frac{\alpha}{\beta^2}:=v
 \end{equation}
+da cui
+\begin{equation}
+\alpha=m\beta
+\end{equation}
+\begin{equation}
+\alpha=v\beta^2
+\end{equation}
+dunque
+\begin{equation}
+v\beta^2=m\beta
+\end{equation}
+\begin{equation}
+(v\beta-m)\beta=0
+\end{equation}
+dato che il parametro $beta$ non può essere nullo si giunge infine alle relazioni inverse
+\begin{equation}
+\begin{cases}
+\beta=\frac{m}{v}\\
+\alpha=\frac{m^2}{v}
+\end{cases}
+\end{equation}
+Si noti che quando si condiziona rispetto al numero di termini $k$ (oppure $q$) esso si va ad aggiungere al parametro $\alpha$
+dunque le espressioni corrette per imporre la varianza sono
+\begin{equation}
+\begin{cases}
+\beta=\frac{m}{v}\\
+\alpha=\frac{m^2}{v}-k
+\end{cases}
+\end{equation}
+Nemmeno il parametro $\alpha$ però può essere negativo, dunque si ha che il valor medio e la varianza non possono essere scelti arbitrariamente ma deve valere
+\begin{equation}
+\frac{m^2}{v}>k
+\end{equation}
+
 mentre la distribuzione gamma inversa ha per valor medio
 \begin{equation}
 \mathbb{E}[\mathcal{I}\mathcal{G}(\alpha,\beta)]=\frac{\beta}{\alpha-1}

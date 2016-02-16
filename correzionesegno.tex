@@ -1,5 +1,29 @@
 \chapter{Risultati del lavoro}
-\section*{Correzione di una svista nell'articolo originale}
+L'articolo originale presenta alcuni errori nell'illustrazione del metodo.\\
+\section*{Correzione di una svista nell'articolo originale: inversione dei raporti di accettazione}
+Nell'articolo \emph{Computational system identification for Bayesian
+NARMAX modelling}  sul quale si è basata la mia implementazione si afferma che, per la mossa di morte riguardante il processo, la probabilità di accettazione è (secondo l'equazione 28)
+\begin{equation}
+\gamma_{death}^{(k)}=min\{1,r_a^{-1}\}
+\end{equation}
+l'affermazione si ripete analoga per il modello di rumore (equazione 34)
+\begin{equation}
+\gamma_{death}^{(q)}=min\{1,r_b^{-1}\}
+\end{equation}
+Dove si assume che $r_a$ e $r_b$ abbiano la stessa espressione dei rapporti di accettazione calcolati per le mosse di nascita (equazioni 35 e 29).\\
+Queste formule sono errate, le formule giuste sono invece esattamente uguali a quelle per la mossa di nascita
+\begin{equation}
+\gamma_{death}^{(k)}=min\{1,r_a\}
+\end{equation}
+\begin{equation}
+\gamma_{death}^{(q)}=min\{1,r_b\}
+\end{equation}
+senza effettuare il reciproco del rapporto.\\
+La differenza tra il rapporto per le mosse di nascita e di morte è già contemplata nella diversa definizione di $k'$ nell'espressione del rapporto.\\
+Il simbolo $k'$ infatti rappresenta il numero di termini proposto dalla mossa e vale rispettivamente $k+1$ per le mosse di nascita e $k-1$ per le mosse di morte.
+
+
+\section*{Correzione di una svista nell'articolo originale: errore di segno in una formula}
 Nell'articolo \emph{Computational system identification for Bayesian
 NARMAX modelling} sul quale si è basata la mia implementazione, in particolare nell'equazione (42) è stato omesso un segno meno.
 L'errore sembra essere sfuggito alla revisione.

@@ -134,11 +134,13 @@ e dunque marginalizzando si ottiene
 \end{align*}
 Il resto è analogo. Se si vuole per esempio calcolare il rapporto di accettazione $r_a(k=1\rightarrow k=0)$ si ottiene
 \begin{align*}
-\frac{p(k=0,\pk | \y,\la,\va)}{p(k=1,\pk | \y,\la,\va)}&=\frac{\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\eq\bq}{\ve I_k}}{p(k=1|\la)p(\pk)\sqrt{(2\pi)^k det(C_{k,\ak})}\mathcal{K}\cdot exp[\mez \sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}
+\frac{p(k=0,\pk | \y,\la,\va)}{p(k=1,\pk | \y,\la,\va)}&=\\
+&\frac{\frac{1}{p(\y)}p(k=0|\la)p(\pk)\normal{\eq\bq}{\ve I_k}}{p(k=1|\la)p(\pk)\sqrt{(2\pi)^k det(C_{k,\ak})}\mathcal{K}\cdot exp[\mez \sigma_e^{-2}(\y-\eq\bq)^{T}(\y-\eq\bq)+\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}
 \end{align*}
 e semplificando
 \begin{align*}
-\frac{p(k=0,\pknew | \y,\la,\va)}{p(k=1,\pk | \y,\la,\va)}&=\frac{p(k=0|\la)}{p(k=1|\la)\sqrt{det(C_{k,\ak})}\sigma_a^{-k}\cdot exp[\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}=\frac{1}{\la\sqrt{det(C_{k,\ak})}\sigma_a^{-k}\cdot exp[\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}
+\frac{p(k=0,\pknew | \y,\la,\va)}{p(k=1,\pk | \y,\la,\va)}&=\frac{p(k=0|\la)}{p(k=1|\la)\sqrt{det(C_{k,\ak})}\sigma_a^{-k}\cdot exp[\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}\\&=
+\frac{1}{\la\sqrt{det(C_{k,\ak})}\sigma_a^{-k}\cdot exp[\mez(\mu_{k,\ak}^T C_{k,\ak}^{-1}\mu_{k,\ak})]}
 \end{align*}
 per il passaggio inverso si ha invece
 \begin{align*}
